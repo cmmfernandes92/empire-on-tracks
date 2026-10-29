@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.CreateScenarioControllerr"
+      spacing="10"
+      alignment="CENTER_LEFT">
+
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <Label text="--- Create Scenario ---" style="-fx-font-weight: bold;" />
+
+    <HBox spacing="10">
+        <Label text="Scenario name:" />
+        <TextField fx:id="scenarioNameField" promptText="e.g., black plague"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Start year:" />
+        <TextField fx:id="startYearField" promptText="≥ 1804" maxWidth="80"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="End year:" />
+        <TextField fx:id="endYearField" promptText="e.g., 1860" maxWidth="80"/>
+    </HBox>
+
+    <Button text="Validate and Proceed" onAction="#onValidateScenario"/>
+
+    <Label fx:id="validationMessageLabel" wrapText="true" style="-fx-text-fill: red;" />
+
+    <Separator/>
+
+    <Label text="Define Scenario Restrictions:" style="-fx-font-weight: bold;" />
+    <VBox spacing="5">
+        <Button text="1 - Available Locomotives" onAction="#onLocomotiveRestriction"/>
+        <Button text="2 - Set Production Rate" onAction="#onProductionRate"/>
+        <Button text="3 - Define Mixed Industries Behavior" onAction="#onMixedIndustries"/>
+        <Button text="0 - Exit" onAction="#handleExit"/>
+    </VBox>
+</VBox>

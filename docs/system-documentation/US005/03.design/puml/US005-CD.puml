@@ -1,0 +1,108 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+class "BuildStationController" {
+    + startBuildStation()
+    + submitStationType(type: StationType)
+    + submitCoordinates(x: int, y: int)
+    + submitCenterPosition(position: CenterPosition)
+    + proposeStationName(): String
+    + submitNameDecision(accept: boolean, customName: String)
+    + confirmStationCreation()
+}
+
+class "Player" {
+    - budget: double
+    + hasSufficientBudget(amount: double): boolean
+    + deductBudget(amount: double): void
+    + registerStation(station: Station): void
+}
+
+class "Station" {
+    - name: String
+    - type: StationType
+    - location: Location
+    - centerPosition: CenterPosition
+    + Station(name: String, type: StationType, location: Location, center: CenterPosition)
+}
+
+class "StationType" {
+    + name: String
+    + cost: double
+    + range: int
+}
+
+enum CenterPosition {
+    NE
+    SE
+    NW
+    SW
+    CENTER
+}
+
+class "Map" {
+    + isOccupied(location: Location): boolean
+    + isStationNameDuplicate(name: String): boolean
+    + addStation(station: Station): void
+    + getNearestCityName(location: Location): String
+}
+
+class "Repositories" {
+    + {static} getInstance(): Repositories
+    + getMapRepository(): MapRepository
+}
+
+class "MapRepository" {
+    + getCurrentMap(): Map
+}
+
+class "BuildStationUI" {
+    + startBuildStation()
+    + requestStationTypeSelection()
+    + requestCoordinates()
+    + requestCenterPosition()
+    + proposeStationName(name: String)
+    + requestNameDecision()
+    + showStationPreview(name: String, location: Location)
+    + showError(message: String)
+    + showSuccessMessage()
+    + highlightNewStation(station: Station)
+}
+
+class "Location" {
+    + x: int
+    + y: int
+    + Location(x: int, y: int)
+}
+
+class "Simulation" {
+    + getCurrentDate(): Date
+}
+
+class "GameState" {
+    + {static} getInstance(): GameState
+    + save(): void
+}
+
+BuildStationUI .> BuildStationController : interacts >
+BuildStationController ..> Repositories : accesses >
+BuildStationController ..> MapRepository : accesses >
+BuildStationController ..> Player : uses >
+BuildStationController ..> Station : creates >
+BuildStationController ..> StationType : uses >
+BuildStationController ..> Location : uses >
+BuildStationController ..> Simulation : uses >
+BuildStationController ..> GameState : saves >
+BuildStationController ..> Map : validates name & location >
+
+Repositories --> "1" MapRepository : mapRepository
+MapRepository --> "1" Map : currentMap
+
+Map --> "*" Station : contains >
+Station --> "1" StationType : is of type >
+Station --> "1" Location : is at >
+Player --> "*" Station : owns >
+@enduml

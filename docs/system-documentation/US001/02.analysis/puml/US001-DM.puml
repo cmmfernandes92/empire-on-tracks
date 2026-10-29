@@ -1,0 +1,26 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+'title US01 - Create a Map (Domain Model)
+
+class Editor {
+}
+class Map {
+    name
+
+}
+class Size{
+    width
+    length
+}
+
+' --- Relacionamentos ---
+Editor "1" -down- "1*" Map : create >
+Map "1" - "1" Size : has >
+
+@enduml

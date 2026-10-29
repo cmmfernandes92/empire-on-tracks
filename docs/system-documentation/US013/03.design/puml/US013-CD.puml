@@ -1,0 +1,85 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+class "CheckConnectionController" {
+    + startCheck()
+    + selectStations(origin: String, destination: String)
+    + chooseLocomotiveType(type: LocomotiveType)
+    + confirmCheck(): boolean
+}
+
+class "Player" {
+    + checkConnection(origin: Station, destination: Station, type: LocomotiveType): boolean
+}
+
+class "PathFinder" {
+    + connectionExists(origin: Station, destination: Station, type: LocomotiveType): boolean
+    - isCompatible(line: RailLine, type: LocomotiveType): boolean
+}
+
+enum LocomotiveType {
+    STEAM
+    DIESEL
+    ELECTRIC
+}
+
+class "Map" {
+    + getStationByName(name: String): Station
+    + getConnectedStations(station: Station): List<Station>
+    + getRailLineBetween(a: Station, b: Station): RailLine
+}
+
+class "Station" {
+    - name: String
+    - location: Location
+    + getName(): String
+}
+
+class "RailLine" {
+    - isElectrified: boolean
+    - isDouble: boolean
+    + isCompatibleWith(type: LocomotiveType): boolean
+}
+
+class "Location" {
+    - x: int
+    - y: int
+}
+
+class "Repositories" {
+    - Repositories()
+    + {static} getInstance(): Repositories
+    + getMapRepository(): MapRepository
+}
+
+class "MapRepository" {
+    + getCurrentMap(): Map
+}
+
+class "CheckConnectionUI" {
+    + requestStationNames()
+    + requestLocomotiveType()
+    + showResult(success: boolean)
+    + showInvalidStations()
+}
+
+CheckConnectionUI .> CheckConnectionController : interacts >
+
+CheckConnectionController ..> Repositories : accesses >
+CheckConnectionController ..> MapRepository : accesses >
+CheckConnectionController ..> Player : requests check >
+CheckConnectionController ..> Station : retrieves >
+
+Player --> PathFinder : uses >
+PathFinder --> Map : analyses >
+Map --> Station : contains >
+Map --> RailLine : contains >
+MapRepository --> Map : currentMap
+
+RailLine --> LocomotiveType : checks compatibility >
+
+@enduml
+

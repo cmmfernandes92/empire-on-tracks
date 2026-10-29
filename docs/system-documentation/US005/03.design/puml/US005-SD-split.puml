@@ -1,0 +1,103 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as PLAYER
+
+participant ":BuildStationUI" as UI
+participant ":BuildStationController" as CTRL
+participant "repositories\n:Repositories" as REPOS
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant ":Map" as MAP
+participant ":Simulation" as SIM
+participant ":GameState" as GAME
+participant ":StationType" as TYPE
+participant ":Location" as LOC
+participant ":Station" as STATION
+participant ":Player" as PLAYER_OBJ
+
+activate PLAYER
+
+    PLAYER -> UI : asks to build a station
+    activate UI
+
+        UI -> CTRL : startBuildStation()
+        activate CTRL
+
+            CTRL -> REPOS : getInstance()
+            REPOS --> CTRL : repositories
+
+            CTRL -> REPOS : getMapRepository()
+            REPOS --> CTRL : mapRepository
+
+            CTRL -> MAP_REPO : getCurrentMap()
+            MAP_REPO --> CTRL : currentMap
+
+            CTRL -> UI : request station type selection
+        deactivate CTRL
+
+        UI --> PLAYER : shows station type options
+    deactivate UI
+
+    PLAYER -> UI : selects station type
+    activate UI
+        UI -> CTRL : submitStationType(type)
+        activate CTRL
+
+            ref over CTRL
+                Handle Station Type Choice
+            end ref
+
+        deactivate CTRL
+    deactivate UI
+
+    PLAYER -> UI : provides coordinates
+    activate UI
+        UI -> CTRL : submitCoordinates(x, y)
+        activate CTRL
+
+            ref over CTRL
+                Handle Station Name Selection
+            end ref
+
+        deactivate CTRL
+    deactivate UI
+
+    PLAYER -> UI : confirms station creation
+    activate UI
+        UI -> CTRL : confirmStationCreation()
+        activate CTRL
+
+            group Validate creation
+                CTRL -> PLAYER_OBJ : hasSufficientBudget(cost)
+                alt insufficient budget
+                    CTRL -> UI : showError("Not enough budget")
+                else
+                    CTRL -> MAP : isOccupied(location)
+                    MAP --> CTRL : true or false
+
+                    alt location is occupied
+                        CTRL -> UI : showError("Location is occupied")
+                    else
+                        CTRL -> STATION : create(name, stationType, location)
+                        CTRL -> MAP : addStation(station)
+                        CTRL -> PLAYER_OBJ : deductBudget(cost)
+
+                        UI -> MAP : highlight new station
+
+                        CTRL -> GAME : save()
+
+                        CTRL -> UI : showSuccess()
+                    end
+                end
+            end
+
+        deactivate CTRL
+    deactivate UI
+
+deactivate PLAYER
+@enduml
+

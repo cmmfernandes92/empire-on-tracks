@@ -1,0 +1,112 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class Editor {
+}
+
+
+class Map {
+    name
+}
+
+class Size {
+    length
+    width
+}
+
+class Industry {
+    production
+}
+
+class PrimaryIndustry {
+    name
+}
+class TransformingIndustry {
+    name
+}
+class MixedIndustry {
+    name
+}
+
+
+class Scenario {
+    industryProductionRate
+    behaviorOfMixedIndustries
+    availableLocomotiveTypes
+    initialBudget
+}
+
+class Period {
+    start
+    end
+}
+
+
+class Simulation {
+    isRunning
+    budget
+}
+
+class Cargo {
+    quantity
+}
+
+class CargoType {
+    type
+    cost
+}
+
+class Locomotive {
+    powerSource
+    acceleration
+    buyCost
+    startYear
+    fuelCost
+    maintenanceCost
+}
+class LocomotiveType {
+type
+}
+
+
+
+Editor "1" -down- "1..*" Map : creates >
+Editor "1" --- "*" Scenario : creates >
+Editor "1" -- "*" Industry : adds >
+
+
+Map "1" - "1" Size : has >
+Map "1" -- "*" Industry : contains >
+
+
+Industry "1"<|--"1" PrimaryIndustry
+Industry "1"<|-"1" TransformingIndustry
+Industry "1"<|-"1" MixedIndustry
+
+TransformingIndustry "1"---"1..*" Cargo:consumes >
+MixedIndustry "1"---"1..*" Cargo:consumes >
+
+
+Industry "1" -- "1..*" Cargo : produces >
+
+Scenario "1" -- "1" Period : has >
+Scenario "*" -- "1..*" Industry : changes Production >
+Scenario "*" - "1" Map : uses >
+Scenario "1" --"1..*" LocomotiveType : restricts locomotion types >
+Scenario "1" -- "1..*" CargoType : restricts cargo types >
+
+LocomotiveType "1" -- "1..*" Locomotive: is from <
+CargoType "1" -- "1" Cargo : is from a certain <
+
+Simulation "1" -- "1..*" Industry : activates >
+Simulation "1" --- "1" Map : starts/pauses >
+Simulation "1" -- "1" Scenario : is composed of >
+
+
+
+@enduml

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pt.ipp.isep.dei.ui.gui.BuildStationFormController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+
+    <Label text="=== UC5: Build a Station ===" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10">
+        <Label text="Station Type:"/>
+        <ComboBox fx:id="stationTypeCombo" prefWidth="250" />
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="X:"/>
+        <TextField fx:id="xField" promptText="X coordinate"/>
+        <Label text="Y:"/>
+        <TextField fx:id="yField" promptText="Y coordinate"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Anchor (if 4x4):"/>
+        <ComboBox fx:id="anchorCombo" prefWidth="120" />
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Station Name:"/>
+        <TextField fx:id="stationNameField" promptText="Optional name (will be suggested)"/>
+    </HBox>
+
+    <HBox spacing="20">
+        <Button text="Build Station" onAction="#handleBuild"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+
+    <Label fx:id="feedbackLabel" style="-fx-text-fill: green;"/>
+</VBox>

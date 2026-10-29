@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : asks to upgrade the station
+    activate System
+
+        System --> Employee : shows list of stations that can be upgraded
+    deactivate System
+
+    Employee -> System : selects a station
+    activate System
+
+        System --> Employee : shows list of possible buildings to use for the upgrade
+    deactivate System
+
+    Employee -> System : chooses a building
+    activate System
+
+        System --> Employee : shows all data and requests confirmation
+    deactivate System
+
+    Employee -> System : confirms data
+    activate System
+
+        System --> Employee : displays operation success
+    deactivate System
+@enduml

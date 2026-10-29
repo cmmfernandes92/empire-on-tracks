@@ -1,0 +1,82 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":CheckConnectionUI" as UI
+participant ":CheckConnectionController" as Controller
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant ":Map" as Map
+participant ":Station" as Station
+participant ":PathFinder" as PathFinder
+participant ":RailLine" as RailLine
+participant ":LocomotiveType" as LocomotiveType
+
+activate Player
+
+Player -> UI : wants to check if a train can travel between two stations
+activate UI
+
+    UI -> Controller : startCheck()
+    activate Controller
+
+        Controller -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> Controller : repositories
+        deactivate REPOS
+
+        Controller -> REPOS_SINGLETON : getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> Controller : mapRepository
+        deactivate REPOS_SINGLETON
+
+        Controller -> MAP_REPO : getCurrentMap()
+        activate MAP_REPO
+            MAP_REPO --> Controller : currentMap
+        deactivate MAP_REPO
+
+        Controller -> UI : request origin and destination stations and locomotive type
+    deactivate Controller
+deactivate UI
+
+UI --> Player : show input fields
+Player -> UI : submits station names and locomotive type
+activate UI
+
+    UI -> Controller : selectStations(origin, destination)
+    activate Controller
+
+        Controller -> Map : getStationByName(origin)
+        activate Map
+            Map --> Controller : stationOrigin
+        deactivate Map
+
+        Controller -> Map : getStationByName(destination)
+        activate Map
+            Map --> Controller : stationDestination
+        deactivate Map
+
+        Controller -> LocomotiveType : retrieve(type)
+        activate LocomotiveType
+            LocomotiveType --> Controller : type
+        deactivate LocomotiveType
+
+        Controller -> PathFinder : connectionExists(origin, destination, type)
+        activate PathFinder
+            PathFinder -> Map : getConnectedStations(origin)
+            PathFinder -> Map : getRailLineBetween(a, b)
+            PathFinder -> RailLine : isCompatibleWith(type)
+            PathFinder --> Controller : true / false
+        deactivate PathFinder
+
+        Controller -> UI : show result
+    deactivate Controller
+deactivate UI
+
+deactivate Player
+@enduml

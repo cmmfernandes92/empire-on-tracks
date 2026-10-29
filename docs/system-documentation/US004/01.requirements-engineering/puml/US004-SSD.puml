@@ -1,0 +1,67 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+
+Editor -> System : asks to create a scenario
+activate System
+System --> Editor : requests scenario name, period (start and end date) and initialBudget
+deactivate System
+
+
+Editor -> System : provides name, start, end date and initialBudget
+activate System
+System --> Editor : show options and asks to select one
+deactivate System
+alt locomotive
+Editor -> System: select locomotive types to include in the scenario
+activate System
+System --> Editor: shows all available locomotion types
+deactivate System
+Editor -> System: defines available types
+activate System
+System --> Editor : success
+deactivate System
+
+else production rate
+Editor -> System: select production rates to include in the scenario
+activate System
+System --> Editor: shows list
+deactivate System
+Editor -> System: select industry and define production rate
+activate System
+loop for each industry
+System --> Editor: success
+deactivate System
+else mixed behavior
+Editor -> System: selects mixed behavior
+activate System
+System --> Editor: show options menu (import/export/transform)
+deactivate System
+Editor -> System: selects behavior
+activate System
+System --> Editor: success
+deactivate System
+end
+end
+Editor -> System: asks to see selected data
+activate System
+System --> Editor : shows all data and requests confirmation
+deactivate System
+
+Editor -> System : confirms data
+activate System
+
+System --> Editor : displays operation success
+deactivate System
+deactivate Editor
+
+@enduml

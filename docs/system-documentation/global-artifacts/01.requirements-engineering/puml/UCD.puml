@@ -1,0 +1,37 @@
+@startuml
+
+left to right direction
+
+
+ Player --> (UC5 - Build a Station)
+ Player --> (UC6 - Upgrade a Station)
+ Player --> (UC7 - List all the Stations by Details)
+ Player --> (UC8 - Build a Railway Line)
+ Player --> (UC9 - Buy a Locomotive)
+ Player --> (UC10 - Assign a Train to a Route)
+ Player --> (UC11 - List all Trains by Locomotive Type)
+ Player --> (UC12 - Operate a Simulation)
+ Player --> (UC13 - Verify Train Connectivity Between Stations)
+ Player --> (UC14 - Find Maintenance Route)
+ Player --> (UC15 - Analyze Average Annual Station Profit)
+ Player --> (UC16 - Perform Passenger Arrivals Analysis)
+ Player --> (UC17 - Perform Cargo Arrivals Analysis)
+ Player --> (UC18 - Perform Train, Passengers and Mail Distribution Analysis)
+Player --> (UC23 - Save a Simulation/Game)
+Player --> (UC24 - Load a Simulation/Game)
+Player --> (UC25 - View Year Financial Results)
+Player --> (UC27 - Get Shortest Route between Two Stations)
+Player --> (UC31 - Analyze Revenue Contribution by Cargo Type & Estimate Future Revenue)
+
+
+
+ Editor --> (UC1 - Create a Map with a size and a name)
+ Editor --> (UC2 - Add an Industry)
+ Editor --> (UC3 - Add a City)
+ Editor --> (UC4 - Create a Scenario)
+Editor --> (UC19 - Save a Map)
+Editor --> (UC20 - Load a Map)
+Editor --> (UC21 - Save a Scenario)
+Editor --> (UC22 - Load a Scenario)
+ @enduml
+

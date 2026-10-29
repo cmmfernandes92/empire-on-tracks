@@ -1,0 +1,68 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class Player {
+    - budget : double
+    + canAfford(cost: double) : boolean
+    + buildRailLine(start: Station, end: Station,\n  isElectrified: boolean, isDouble: boolean) : RailLine
+}
+
+class Station {
+    - name : String
+    + getName() : String
+}
+
+class RailLine {
+    - start : Station
+    - end : Station
+    - isElectrified : boolean
+    - isDouble : boolean
+    - cost : double
+    + RailLine(start, end, isElectrified, isDouble)
+    + getCost() : double
+}
+
+class Map {
+    - stations : List<Station>
+    - railLines : List<RailLine>
+    + getAllStations() : List<Station>
+    + addRailLine(railLine: RailLine) : void
+}
+
+class BuildLineController {
+    + BuildLineController(player: Player, map: Map)
+    + startRailLineCreation() : List<Station>
+    + createRailLine(start: Station, end: Station,\n  isElectrified: boolean, isDouble: boolean) : RailLine
+}
+
+class BuildLineUI {
+    + askToBuildRailLine() : void
+    + showStationList(stations: List<Station>) : void
+    + requestLineDetails() : void
+    + confirmLineData() : boolean
+    + showResult(success: boolean) : void
+}
+
+BuildLineUI .> BuildLineController
+
+BuildLineController --> Map : map
+BuildLineController --> Player : player
+BuildLineController ..> RailLine
+BuildLineController ..> Station
+
+Player --> "*" RailLine : builds >
+Player --> "*" Station : hasAccessTo >
+
+Map *-- "*" Station : contains >
+Map *-- "*" RailLine : contains >
+
+RailLine --> "1" Station : start
+RailLine --> "1" Station : end
+
+@enduml

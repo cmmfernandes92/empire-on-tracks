@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.StationDetailsViewController"
+      spacing="8" alignment="CENTER" style="-fx-padding: 18;">
+
+    <Label fx:id="title" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <Label text="Buildings:" style="-fx-font-weight: bold;"/>
+    <ListView fx:id="listBuildings" prefWidth="420" prefHeight="120"/>
+
+    <Label text="Cargoes:" style="-fx-font-weight: bold;"/>
+    <ListView fx:id="listCargoes"   prefWidth="420" prefHeight="120"/>
+
+    <Button text="Close" onAction="#handleClose"/>
+</VBox>

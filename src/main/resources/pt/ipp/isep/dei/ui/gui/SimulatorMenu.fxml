@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="pt.ipp.isep.dei.ui.gui.SimulatorMenuController">
+
+    <top>
+        <HBox spacing="20" alignment="CENTER_LEFT" style="-fx-padding: 10;">
+            <Label fx:id="dateLabel" text="Date: YYYY-MM-DD" style="-fx-font-weight: bold;"/>
+            <Label fx:id="budgetLabel" text="Budget: $0.00" style="-fx-font-weight: bold;"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="12" alignment="TOP_CENTER" style="-fx-padding: 30;">
+            <Label text="--- SIMULATOR MENU ---"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+            <Button text="1 - Start automatic simulation" onAction="#handleStartAuto" prefWidth="300" />
+            <Button text="2 - Pause automatic simulation" onAction="#handlePauseAuto" prefWidth="300" />
+            <Button text="3 - Advance one month" onAction="#handleAdvanceOneMonth" prefWidth="300" />
+            <Button text="4 - Show simulation status" onAction="#handleStatus" prefWidth="300" />
+            <Button text="5 - Edit simulation (UC5–UC12)" onAction="#handleEdit" prefWidth="300" />
+            <Button text="6 - Help" onAction="#handleHelp" prefWidth="300" />
+            <Button text="7 - Save Simulation" onAction="#handleSaveSimulation" prefWidth="300"/>
+            <Button text="8 - Exit" onAction="#handleExit" prefWidth="300" />
+            <Button text="0 - Cancel" onAction="#handleCancel" prefWidth="300" />
+
+
+            <TextArea fx:id="eventLog" prefHeight="200" prefWidth="300" editable="false" promptText="Events will appear here..." />
+        </VBox>
+    </center>
+
+</BorderPane>

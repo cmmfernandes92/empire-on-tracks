@@ -1,0 +1,100 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+class "UpgradeStationController" {
+    + startUpgrade()
+    + selectStation(stationName: String)
+    + chooseUpgrade(type: BuildingType)
+    + confirmUpgrade(): boolean
+}
+
+class "Player" {
+    - budget: double
+    + hasSufficientBudget(amount: double): boolean
+    + deductBudget(amount: double): void
+}
+
+class "Station" {
+    - name: String
+    - buildings: List<Building>
+    + addBuilding(building: Building): void
+    + hasBuildingType(type: BuildingType): boolean
+    + removeBuilding(type: BuildingType): void
+}
+
+class "Building" {
+    - type: BuildingType
+    + Building(type: BuildingType)
+    + getType(): BuildingType
+}
+
+enum BuildingType {
+    TELEGRAPH
+    TELEPHONE
+    SMALL_CAFE
+    LARGE_CAFE
+    CUSTOMS
+    POST_OFFICE
+    SMALL_HOTEL
+    LARGE_HOTEL
+    SILO
+    LIQUID_STORAGE
+}
+
+class "Map" {
+    + retrieveStation(name: String): Station
+    + isLocationOccupied(location: Location): boolean
+    + isStationNameDuplicate(name: String): boolean
+    + addStation(station: Station): void
+}
+
+class "Repositories" {
+    - Repositories()
+    + {static} getInstance(): Repositories
+    + getMapRepository(): MapRepository
+}
+
+class "MapRepository" {
+    + getCurrentMap(): Map
+}
+
+class "UpgradeStationUI" {
+    + requestStationSelection()
+    + showUpgradeOptions()
+    + showUpgradeSuccess()
+    + showInvalidChoice()
+    + showInsufficientBudget()
+    + showInfo(message: String)
+    + showError(message: String)
+}
+
+class "Simulation" {
+    + getCurrentDate(): Date
+}
+
+class "GameState" {
+    + save(): void
+}
+
+UpgradeStationUI .> UpgradeStationController : interacts >
+
+UpgradeStationController ..> Repositories : accesses >
+UpgradeStationController ..> MapRepository : accesses >
+UpgradeStationController ..> Player : verifies budget >
+UpgradeStationController ..> Station : selected >
+UpgradeStationController ..> Building : creates >
+UpgradeStationController ..> Simulation : checks date >
+UpgradeStationController ..> GameState : saves state >
+
+Repositories --> "1" MapRepository : mapRepository
+MapRepository --> "1" Map : currentMap
+
+Map --> "*" Station : contains >
+Station --> "*" Building : has >
+Building --> BuildingType : has >
+Player --> "*" Station : owns >
+
+@enduml

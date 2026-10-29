@@ -1,0 +1,27 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+
+participant ":BuildLineController" as CTRL
+participant "map\n:Map" as MAP
+
+autonumber 2
+-> CTRL: startRailLineCreation()
+
+autonumber 2.1
+activate CTRL
+    group Get Stations from Map
+
+        CTRL -> MAP : getAllStations()
+        activate MAP
+        MAP --> CTRL : stationList
+        deactivate MAP
+
+    end
+autonumber 3
+<--CTRL: stationList
+deactivate CTRL
+@enduml

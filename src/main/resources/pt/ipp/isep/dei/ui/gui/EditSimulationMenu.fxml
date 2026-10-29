@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pt.ipp.isep.dei.ui.gui.EditSimulationMenuController"
+      spacing="12" alignment="TOP_CENTER">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="== EDIT COMMANDS (UC5–UC12) =="
+           style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <Button text="1 - Build a Station" onAction="#handleUC5BuildStation" prefWidth="300"/>
+    <Button text="2 - Upgrade a Station" onAction="#handleUC6UpgradeStation" prefWidth="300"/>
+    <Button text="3 - List all Stations" onAction="#handleUC7ListStations" prefWidth="300"/>
+    <Button text="4 - Build a Railway Line" onAction="#handleUC8BuildLine" prefWidth="300"/>
+    <Button text="5 - Buy a Locomotive" onAction="#handleUC9BuyLocomotive" prefWidth="300"/>
+    <Button text="6 - Assign a Train to a Route" onAction="#handleUC10AssignTrain" prefWidth="300"/>
+    <Button text="7 - List all Trains" onAction="#handleUC11ListTrains" prefWidth="300"/>
+    <Button text="8 - Operate Simulation" onAction="#handleUC12OperateSimulation" prefWidth="300"/>
+    <Button text="0 - Cancel" onAction="#handleCancel" prefWidth="300"/>
+
+</VBox>

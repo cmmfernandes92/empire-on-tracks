@@ -1,0 +1,91 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class Simulator{
+isRunning
+}
+class Industry {
+    production
+}
+class PrimarySectorIndustry{
+    type
+}
+class TransformingIndustry{
+    type
+    demand
+}
+class MixedIndustry{
+    type
+}
+class Station {
+    name
+    range
+    type
+    cost
+}
+
+class Cargo {
+    type
+    quantity
+    limit
+}
+class HouseBlock{
+    people
+}
+
+class RailLine{
+cost
+type
+}
+
+class Location{
+    positionX
+    positionY
+}
+
+
+class City {
+    numberOfHouseBlocks
+    name
+}
+
+class Train{
+     type
+     speed
+     cargo
+     cost
+}
+
+class Route{
+    starts
+    ends
+}
+
+Simulator "1" -- "1*" Industry : start/pause >
+
+Industry "1*" -- "1" PrimarySectorIndustry : could be >
+Industry "1*" -- "1" TransformingIndustry : could be >
+Industry "*" -- "1" MixedIndustry : could be >
+Industry "1" -- "1*" Cargo : produces >
+Industry "1*" -- "1*" Station : load/unload >
+Industry "1" - "1" Location : have >
+
+Station "1" - "1*" Cargo : assigned to <
+Station "1" -- "1" Location : has >
+Station "1" -left "1" RailLine : connect <
+Station "1*" -- "1*" Train : Load/unload <
+
+Station "1*" -- "1*" HouseBlock : Load/unload >
+
+Train "1" -- "1*" Route : follow >
+
+Route "1" -- "1*" RailLine : use >
+Route "1" -- "2*" Station : connect >
+City "1" -- "1" Location : has >
+City "1"-left"1*" HouseBlock : contain >
+@enduml

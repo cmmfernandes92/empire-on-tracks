@@ -1,0 +1,60 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : ask to "Create a Map with size and name"
+    activate System
+
+        System --> Employee : Ask the name
+    deactivate System
+
+    Employee -> System : Gives name
+    activate System
+
+    System --> Employee :ask if he want to use predefined sizes or custom sizes
+
+    deactivate System
+    alt custom Size
+Employee->System:select custom Size
+activate System
+System --> Employee : Ask width, and height
+deactivate System
+Employee -> System : Gives width, height
+activate System
+System-->Employee:show data and ask for a confirmation
+deactivate System
+     Employee -> System : confirms map creation
+     activate System
+
+     System --> Employee : displays operation success
+     deactivate System
+else predefined Size
+
+
+Employee->System:select predefined Size
+activate System
+System-->Employee:show list of Sizes and ask to select one
+deactivate System
+Employee->System:select one size
+activate System
+ System-->Employee:show data and ask for a confirmation
+deactivate System
+   Employee -> System : confirms map creation
+     activate System
+
+     System --> Employee : displays operation success
+     deactivate System
+
+end
+
+
+
+@enduml

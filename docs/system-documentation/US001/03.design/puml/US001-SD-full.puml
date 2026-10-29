@@ -1,0 +1,232 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Employee
+participant ":CreateMapUI" as UI
+participant ":CreateMapController" as Controller
+
+participant "Repositories" as Rep
+participant "repositories\n :Repository" as Repos
+participant "sizeRepository \n: SizeRepository" as SizeRepository
+
+participant ":SizeMapper" as SizeMapper
+participant "listSize\n:List<Size>" as listSize
+participant "listSizeDTO\n:List<SizeDTO>" as listSizeDTO
+participant "sizeDTO\n:SizeDTO" as SizeDTO
+
+participant "mapRepository \n: MapRepository" as Repository
+
+
+participant "map\n:Map" as Map
+participant "size\n:Size" as Size
+activate Employee
+
+    Employee -> UI : ask to "Create a Map with size and name"
+    activate UI
+
+            UI --> Controller** : create()
+
+            UI-->Employee:Ask the name
+            deactivate UI
+            Employee->UI:Gives name
+            activate UI
+            UI-->Employee: ask if he want to use predefined sizes or custom sizes
+            deactivate UI
+
+            alt custom Size
+            Employee->UI:select custom Size
+            activate UI
+ UI --> Employee : Ask width, and height
+        deactivate UI
+
+
+
+
+
+
+
+    Employee -> UI : Gives width, height
+
+    activate UI
+    UI-->Employee:show data and ask for a confirmation
+    deactivate UI
+    Employee ->UI:confirms Data
+    activate UI
+
+             UI -> Controller  : createMap(name,width,height)
+             activate Controller
+
+
+
+
+
+
+
+            Controller->Rep: getInstance()
+            activate Rep
+
+            Rep-->Controller:repositories
+            deactivate Rep
+            Controller->Repos:getMapRepository
+            activate Repos
+            Repos--> Controller:mapRepository
+            deactivate Repos
+
+            Controller->Repository:createMap(name,width,height)
+            activate Repository
+            Repository-->Map**:create(name,width,height)
+            activate Map
+            Map-->Size**:create(width,height)
+            activate Size
+            Size->Size:isPositive(width)
+            Size->Size:isPositive(height)
+            Size-->Size:true
+            Size-->Size:true
+            deactivate Size
+
+
+            deactivate Map
+
+
+
+                    Repository->Repository:saveMap(map)
+                    activate Repository
+                    Repository->Repository:isMapNameUnique()
+                    Repository-->Repository:true
+                    deactivate Repository
+                    Repository-->Controller:size
+
+                                deactivate Repository
+
+
+
+
+
+                Controller-->UI:size
+
+                deactivate Controller
+                UI-->Employee:displays operation success
+                deactivate UI
+
+        else predefined Size
+
+
+
+        Employee->UI:select predefined Size
+        activate UI
+        UI->Controller:getAvaiableSize()
+        activate Controller
+        Controller->Rep: getInstance()
+                    activate Rep
+
+                    Rep-->Controller:repositories
+                    deactivate Rep
+                    Controller->Repos:getSizeRepository
+                    activate Repos
+                    Repos--> Controller:sizeRepository
+                    deactivate Repos
+                    Controller->SizeRepository:getAvaiableSize()
+                    activate SizeRepository
+                    SizeRepository-->listSize**:create()
+                    SizeRepository-->Controller:listSize
+                    deactivate SizeRepository
+                    Controller-->SizeMapper**:create()
+
+                                Controller->SizeMapper: toDTO(listSize)
+                                activate SizeMapper
+                                SizeMapper-->listSizeDTO**:create()
+                                loop for each Map in list
+                                SizeMapper->listSize:size=get(i)
+                                activate listSize
+                                deactivate listSize
+
+                                SizeMapper->SizeMapper:SizeDTO=toDTO(size)
+                                activate SizeMapper
+                                SizeMapper-->SizeDTO**:create(size)
+                                deactivate SizeMapper
+                                SizeMapper->listSizeDTO:add(sizeDTO)
+                                activate listSizeDTO
+
+                                deactivate listSizeDTO
+                                end
+                                SizeMapper-->Controller:listSizeDTO
+                                deactivate SizeMapper
+                                Controller-->UI:listSizeDTO
+
+
+
+
+                                deactivate Controller
+                    deactivate Controller
+                    UI-->Employee:show list of Sizes and ask to select one
+                    deactivate UI
+                    Employee->UI:select one size
+                    activate UI
+                    UI-->Employee:show data and ask for a confirmation
+                    deactivate UI
+                    Employee ->UI:confirms Data
+                    activate UI
+
+
+                                 UI -> Controller  : createMap(name,sizeID)
+
+                                 activate Controller
+                                 Controller->Rep: getInstance()
+                                                     activate Rep
+
+                                                     Rep-->Controller:repositories
+                                                     deactivate Rep
+                                                     Controller->Repos:getSizeRepository
+                                                     activate Repos
+                                                     Repos--> Controller:sizeRepository
+                                                     deactivate Repos
+                                                     Controller->SizeRepository:findSizebyID(sizeID)
+                                                     activate SizeRepository
+                                                     SizeRepository-->Controller:Size
+                                                     deactivate SizeRepository
+
+
+
+
+
+
+
+                                Controller->Rep: getInstance()
+                                activate Rep
+
+                                Rep-->Controller:repositories
+                                deactivate Rep
+                                Controller->Repos:getMapRepository
+                                activate Repos
+                                Repos--> Controller:mapRepository
+                                deactivate Repos
+
+                                Controller->Repository:createMap(name,size)
+                                activate Repository
+                                Repository-->Map**:create(name,size)
+                                    Repository->Repository:saveMap(map)
+                                                    activate Repository
+                                                    Repository->Repository:isMapNameUnique()
+                                                    Repository-->Repository:true
+                                                    deactivate Repository
+                                                    Repository-->Controller:size
+
+                                                                deactivate Repository
+
+                                deactivate Repository
+                                Controller-->UI:size
+                                deactivate Controller
+                                UI-->Employee:displays  operation success
+
+
+
+
+
+    deactivate UI
+    end
+
+@enduml

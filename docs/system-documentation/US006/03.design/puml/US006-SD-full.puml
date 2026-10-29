@@ -1,0 +1,127 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":UpgradeStationUI" as UI
+participant ":UpgradeStationController" as Controller
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant ":Map" as Map
+participant ":Station" as Station
+participant ":Building" as Building
+participant ":Player" as PlayerObj
+participant ":GameState" as GameState
+participant ":Simulation" as Simulation
+
+activate Player
+
+Player -> UI : wants to upgrade a station
+activate UI
+
+    UI -> Controller : startUpgrade()
+    activate Controller
+
+        Controller -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> Controller : repositories
+        deactivate REPOS
+
+        Controller -> REPOS_SINGLETON : getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> Controller : mapRepository
+        deactivate REPOS_SINGLETON
+
+        Controller -> MAP_REPO : getCurrentMap()
+        activate MAP_REPO
+            MAP_REPO --> Controller : currentMap
+        deactivate MAP_REPO
+
+        Controller -> UI : request station name and upgrade type
+    deactivate Controller
+deactivate UI
+
+UI --> Player : prompt for station name and building type
+Player -> UI : submits station name and building type
+activate UI
+
+    UI -> Controller : submitUpgrade(stationName, buildingType)
+    activate Controller
+
+        Controller -> Map : retrieveStation(stationName)
+        activate Map
+            Map --> Controller : station
+        deactivate Map
+
+        Controller -> Simulation : getCurrentDate()
+        activate Simulation
+            Simulation --> Controller : currentDate
+        deactivate Simulation
+
+        Controller -> Controller : validate building type availability
+
+        alt type not available yet
+            Controller -> UI : showError("Building not yet available")
+        else
+            Controller -> Station : isCompatible(buildingType)
+            activate Station
+                Station --> Controller : true / false
+            deactivate Station
+
+            alt not compatible
+                Controller -> UI : showError("Incompatible building type")
+            else
+                Controller -> Station : hasBuildingType(buildingType)
+                activate Station
+                    Station --> Controller : true / false
+                deactivate Station
+
+                alt already has that building
+                    Controller -> UI : warn("Station already has this building")
+                else
+                    Controller -> PlayerObj : hasSufficientBudget(buildingType.cost)
+                    activate PlayerObj
+                        PlayerObj --> Controller : true / false
+                    deactivate PlayerObj
+
+                    alt insufficient budget
+                        Controller -> UI : showError("Not enough budget")
+                    else
+                        alt building is Telephone and station has Telegraph
+                            Controller -> Station : removeBuilding(TELEGRAPH)
+                            Controller -> UI : showInfo("Telegraph removed; Telephone installed")
+                        end
+
+                        Controller -> Building : create(buildingType)
+                        activate Building
+                            Building --> Controller : building
+                        deactivate Building
+
+                        Controller -> Station : addBuilding(building)
+                        Controller -> PlayerObj : deductBudget(buildingType.cost)
+
+                        UI -> Map : animateBuildingUpgrade(station, buildingType)
+
+                        Controller -> GameState : save()
+                        GameState --> Controller : confirmation
+
+                        Controller -> UI : showSuccessMessage()
+                    end
+                end
+            end
+        end
+
+        alt unexpected error
+            Controller -> UI : showError("An unexpected error occurred. Please try again.")
+        end
+
+    deactivate Controller
+deactivate UI
+
+deactivate Player
+@enduml
+

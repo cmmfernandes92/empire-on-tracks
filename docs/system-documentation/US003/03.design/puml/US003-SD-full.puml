@@ -1,0 +1,137 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Editor
+participant ":AddCityUI"            as UI
+participant ":AddCityController"    as CTRL
+participant "map\n:Map"                  as Map
+participant "city\n:City"           as City
+participant ":HouseBlock"           as HouseBlock
+participant ":Location"             as Location
+
+activate Editor
+
+Editor -> UI : asks to add a city
+activate UI
+    UI --> CTRL**: create(map)
+
+    UI --> Editor : requests city details (name, positionX, positionY, houseBlockCount\n houseblockAssignmentMethod)
+deactivate UI
+
+Editor -> UI : types city details
+activate UI
+UI --> Editor: shows all data and requests confirmation
+deactivate UI
+Editor -> UI: confirms data
+activate UI
+
+alt method = "manual"
+    loop for each houseblock
+        UI --> Editor : request positions of house blocks
+        deactivate UI
+        Editor -> UI : submits positions
+        activate UI
+    end
+
+     UI -> CTRL : createCity(name, positionX, positionY, houseBlockCount,\n assignmentMethod, manualPosX, manualPosY)
+        activate CTRL
+         CTRL -> Map : isCityNameDuplicate(name)
+                activate Map
+                    Map --> CTRL : false
+                deactivate Map
+        CTRL -> Map : create(name, positionX, positionY, houseBlockCount,\n houseblockAssignmentMethod, manualPosX, manualPosY)
+        activate Map
+
+        activate City
+        Map --> City**: create(name, positionX, positionY, houseBlockCount,\n houseblockAssignmentMethod, manualPosX, manualPosY)
+        City -> City : validateName()
+        activate City
+                    City -> City : validateHouseBlocks()
+                    activate City
+                    City --> City: true
+                    deactivate City
+
+                    City --> City: true
+                    deactivate City
+
+                    City -> City : createHouseBlocksManually(posX,posY)
+                    activate City
+                    deactivate City
+        loop for each houseblock
+         City --> HouseBlock** : create(positionX,positionY)
+         activate HouseBlock
+         HouseBlock --> Location** : create(positionX, positionY)
+         deactivate Location
+         deactivate HouseBlock
+         City -> City : addHouseBlock(block)
+         activate City
+         deactivate City
+         end
+            Map --> CTRL: city
+
+         deactivate City
+         deactivate Map
+
+        CTRL --> UI : city
+
+    deactivate CTRL
+
+else method = "automatic"
+
+    UI -> CTRL : createCity(name, positionX, positionY,\n houseBlockCount, houseblockAssignmentMethod)
+    activate CTRL
+
+        CTRL -> Map : isCityNameDuplicate(name)
+        activate Map
+            Map --> CTRL : false
+        deactivate Map
+
+        CTRL -> Map : create(name, positionX, positionY, houseBlockCount, houseblockAssignmentMethod)
+        activate Map
+        Map --> City** : create(name, positionX, positionY,\n houseBlockCount, houseblockAssignmentMethod)
+        activate City
+               City -> City : validateName()
+                    activate City
+                                City -> City : validateHouseBlocks()
+                                activate City
+                                City --> City: true
+                                deactivate City
+
+                                City --> City: true
+            deactivate City
+            City -> City : createHouseBlocksAutomatically()
+            activate City
+            deactivate City
+            loop for each house block
+                City -> City : computeRelativePosition()
+                activate City
+                deactivate City
+                City --> HouseBlock** : create(positionX,positionY)
+                activate HouseBlock
+                HouseBlock --> Location** : create(positionX,positionY)
+
+                deactivate Location
+                deactivate HouseBlock
+                City -> City : addHouseBlock(block)
+                activate City
+                deactivate City
+            end
+            deactivate City
+        Map --> CTRL : city
+        deactivate Map
+
+
+        CTRL --> UI : city
+    deactivate CTRL
+end
+
+UI --> Editor : displays operation success
+deactivate UI
+
+
+deactivate Editor
+@enduml

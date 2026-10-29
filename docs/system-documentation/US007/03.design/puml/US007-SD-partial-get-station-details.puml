@@ -1,0 +1,44 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+
+participant ":StationController" as CTRL
+participant "map\n:Map" as REPOS
+participant "Map \n :Station" as REPOS_SINGLETON
+participant "Cargo" as CARGO
+participant "Building" as BUILDING
+autonumber 6
+->CTRL: getStationDetails(stationId)
+group Get Station to See its Details
+activate CTRL
+autonumber 6.1
+CTRL -> REPOS : getStation()
+activate REPOS
+REPOS --> CTRL: listStation
+deactivate REPOS
+
+CTRL -> REPOS_SINGLETON : getAllNamesStation
+activate REPOS_SINGLETON
+loop
+    REPOS_SINGLETON -> REPOS_SINGLETON : getname()
+end
+REPOS_SINGLETON --> CTRL: listStationName
+deactivate REPOS_SINGLETON
+
+CTRL -> CTRL : getStationByName(stationName)
+CTRL --> CTRL : id
+
+activate REPOS_SINGLETON
+CTRL -> REPOS_SINGLETON : getDetails(listStation[id])
+    REPOS_SINGLETON -> BUILDING : getUpgrades()
+    REPOS_SINGLETON -> CARGO : getCargoes()
+REPOS_SINGLETON --> CTRL : stationDetails
+end
+deactivate REPOS_SINGLETON
+autonumber 7
+<-- CTRL: displays(stationDetails)
+deactivate CTRL
+@enduml

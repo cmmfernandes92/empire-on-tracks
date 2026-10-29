@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Organization\nEmployee" as Player
+participant ":System" as System
+
+activate Player
+
+    Player -> System : requests maintenance route
+        activate System
+
+            System --> Player : shows maintenance options (all lines or only electrified)
+        deactivate System
+
+        Player -> System : selects maintenance type
+        activate System
+
+            System --> Player : requests to select start station (if multiple options exist)
+        deactivate System
+
+        Player -> System : selects start station (if prompted)
+        activate System
+
+            System --> Player : displays network visualization with highlighted route
+        deactivate System
+
+        Player -> System : confirms data
+        activate System
+
+            System --> Player : displays operation success
+        deactivate System
+@enduml

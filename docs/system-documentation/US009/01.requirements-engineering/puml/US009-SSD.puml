@@ -1,0 +1,37 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+
+    Player -> System : requests to buy a locomotive
+    activate System
+
+        System --> Player : shows available locomotives and asks to select one
+    deactivate System
+
+    Player -> System : selects a locomotive
+    activate System
+
+            System --> Player : asks for train name
+    deactivate System
+
+    Player -> System : enters train name
+        activate System
+
+            System --> Player : shows all data and requests confirmation
+    deactivate System
+
+    Player -> System : confirms data
+    activate System
+
+        System --> Player : displays purchase success
+    deactivate System
+
+@enduml

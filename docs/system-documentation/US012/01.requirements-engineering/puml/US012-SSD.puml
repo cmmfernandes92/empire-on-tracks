@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Owner
+participant ":System" as System
+
+activate Owner
+
+    Owner -> System : create a simulation with industries, cities, stations, railroad \n networks, and scenarios
+    activate System
+
+        System --> Owner : ask if they want to start/pause
+    deactivate System
+
+    loop Simulation
+        alt Player selects "start"
+            Owner -> System : selects start
+            activate System
+
+                System --> Owner : generates cargoes at stations, automatically, considering \nthe cities and industries that the railway network serves
+            deactivate System
+        else Player selects "pause"
+            Owner -> System : selects pause
+            activate System
+
+                System --> Owner : stop generates cargoes
+            deactivate System
+        end
+    end
+
+@enduml
+

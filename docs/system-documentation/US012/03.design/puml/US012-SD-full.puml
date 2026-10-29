@@ -1,0 +1,181 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Owner
+participant ":SimulatorUI" as UI
+participant ":SimulatorController" as Controller
+participant ":Map" as Map
+
+
+participant "Map \n :Station" as Stations
+
+
+participant "Map\n Industry" as Industries
+participant "Industries\n Cargo" as Cargo
+
+participant "Industries\n PrimaryIndustry" as PrimaryIndustry
+participant "Industries\n TransformingIndustry" as TransformingIndustry
+participant "Industries\n MixedIndustry" as MixedIndustry
+
+participant "Map \n :Trains" as Rep_Trains
+participant "Map \n :AvaiableTrains" as Trains
+
+participant ":SimulationTime" as Time
+participant "RepositorieScenario" as Rep_Scenario
+participant "RepositorieScenario\n Scenario" as Scenario
+
+
+activate Owner
+
+Owner -> UI : create simulation with industries, cities, stations, \n railroad networks, and scenarios
+activate UI
+UI -> Controller : loadSimulator(Map, Rep_Scenario)
+
+UI --> Owner : ask if they want to start/pause
+deactivate UI
+
+loop Simulation
+    alt Player selects "start"
+        Owner -> UI : selects start
+        activate UI
+        UI -> Controller : start()
+
+        loop
+            activate Controller
+            Controller -> Controller : updateMap(True)
+            Controller -> Map : getMap()
+            activate Map
+            Map --> Controller : Map
+            deactivate Map
+
+            Controller -> Rep_Scenario : change()
+            activate Rep_Scenario
+            Rep_Scenario -> Time : getDate()
+            activate Time
+            Time --> Rep_Scenario : Date
+            deactivate Time
+
+            Rep_Scenario -> Scenario : activate()
+            activate Scenario
+
+            opt Scenario changes industry production
+                Scenario -> Industries : changeProductionRate()
+                activate Industries
+                Industries-->Industries:changeProduction()
+                deactivate Industries
+                end
+                opt Mixed to Production
+                    Scenario -> MixedIndustry : changeToPrimary()
+                    MixedIndustry --> MixedIndustry : demand(False)
+                end
+                opt Mixed to Transforming
+                    Scenario -> MixedIndustry : changeToTransforming()
+                    MixedIndustry --> MixedIndustry : demand(true)
+                end
+
+
+
+
+            opt Scenario disables trains
+                Scenario -> Trains : disableTrain(train)
+                activate Trains
+                Trains->Trains:RemoveFromList(Train)
+
+                deactivate Trains
+
+           end
+
+                       opt Scenario enables trains
+                           Scenario -> Trains : enableTrain(train)
+                           activate Trains
+                           Trains->Trains:AddToList(Train)
+                           deactivate Trains
+                      end
+            deactivate Scenario
+
+            activate Map
+            ' Atualização das indústrias (geração de carga)
+            Controller -> Map : updateIndustries()
+            activate Map
+            Map -> Industries : generateCargoAllStations()
+            activate Industries
+            Industries -> Cargo : generateCargo()
+            activate Cargo
+            Cargo->Cargo:generateCargo(production,demand)
+            deactivate Cargo
+            deactivate Industries
+            deactivate Map
+
+            ' Atualização das estações (coleta até 24 cargas)
+            Controller -> Map : updateStations()
+            activate Map
+            Map -> Stations : findNearbyIndustries()
+            activate Stations
+            Stations -> Map : getIndustriesInRange()
+            activate Map
+            Map --> Stations : listOfNearbyIndustries
+
+            loop Station.cargo < 24
+                Stations -> Industries : collectCargo()
+                activate Industries
+                Industries->Cargo:removecargo()
+                activate Cargo
+                Cargo->Cargo:removecargo()
+                deactivate Cargo
+                Industries --> Stations : Cargo
+            end
+
+            deactivate Map
+            deactivate Stations
+            deactivate Map
+
+            ' Atualização dos trens (cada um com limite próprio)
+            Controller -> Rep_Trains : updateTrains()
+            activate Rep_Trains
+            Rep_Trains -> Trains : move()
+            activate Trains
+            Trains -> Controller : hasStationNearby()
+
+            opt station nearby
+                Trains -> Stations : collectCargo()
+
+                Stations --> Trains : Cargo
+            end
+
+            deactivate Trains
+            deactivate Rep_Trains
+
+            Controller --> Map : updatedMap
+            deactivate Map
+
+            Controller --> UI : display(updatedMap)
+            Controller --> Time : addTime(True)
+
+            deactivate Controller
+        end
+
+        UI --> Owner : simulation step completed
+        deactivate UI
+
+    else Player selects "pause"
+        Owner -> UI : selects pause
+        activate UI
+        UI --> Controller : pause()
+        activate Controller
+            Controller -> Map : updateMap(False)
+            activate Map
+            Map --> Controller : Map
+            deactivate Map
+            Controller --> UI : display(Map)
+            Controller --> Time : addTime(False)
+        UI --> Owner : stop generating cargoes
+        deactivate UI
+    end
+end
+
+deactivate Owner
+@enduml

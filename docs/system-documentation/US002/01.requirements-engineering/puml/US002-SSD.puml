@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : Ask to add an industry.
+    activate System
+    System-->Employee:Show all maps and ask to select one
+    deactivate System
+    Employee->System:select one map
+    activate System
+System-->Employee:Show the different types of industry and ask to select .
+
+
+    deactivate System
+    Employee->System:Select one IndustryType.
+
+
+
+    activate System
+     System-->Employee:Ask for the X,Y position.
+
+    deactivate System
+
+   Employee->System:Gives positionX,positionY.
+
+   activate System
+   System-->Employee:show data and ask for confirmation
+deactivate System
+Employee->System:Gives confirmation
+activate System
+   System-->Employee:Confirm the creation of this industry.
+
+   deactivate System
+
+
+
+
+@enduml

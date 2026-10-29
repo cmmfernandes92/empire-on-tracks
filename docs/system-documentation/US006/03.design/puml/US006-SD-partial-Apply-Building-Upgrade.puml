@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":UpgradeStationController" as CTRL
+participant ":Building" as BUILDING
+participant ":Station" as STATION
+participant ":GameState" as GAME
+
+autonumber 16
+
+-> CTRL : Apply Building Upgrade
+
+activate CTRL
+
+autonumber 16.1
+
+alt buildingType == TELEPHONE and station has TELEGRAPH
+    CTRL -> STATION : removeBuilding(TELEGRAPH)
+    activate STATION
+    STATION --> CTRL : removed
+    deactivate STATION
+
+end
+
+CTRL -> CTRL : checkSufficientBudget(buildingType.cost)
+alt insufficient budget
+    CTRL -> CTRL : raiseError("Insufficient budget")
+else
+    CTRL -> BUILDING : create(buildingType)
+    activate BUILDING
+    BUILDING --> CTRL : building
+    deactivate BUILDING
+
+    CTRL -> STATION : addBuilding(building)
+    activate STATION
+    STATION --> CTRL : added
+    deactivate STATION
+
+    CTRL -> CTRL : deductBudget(buildingType.cost)
+
+    CTRL -> GAME : save()
+    activate GAME
+    GAME --> CTRL : saved
+    deactivate GAME
+end
+@enduml

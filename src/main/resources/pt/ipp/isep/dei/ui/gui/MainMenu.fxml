@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.MainMenuController"
+      fx:id="rootVBox"
+      alignment="CENTER" spacing="10" style="-fx-padding: 30;">
+
+   <Label text="=== Welcome to Empire on Tracks ===" style="-fx-font-size: 18px;"/>
+   <Label text="------------ MAIN MENU ------------" style="-fx-font-size: 14px;"/>
+
+   <Button fx:id="doLoginButton" text="Do Login" onAction="#handleDoLogin"/>
+   <Button fx:id="devTeamButton" text="Know the Development Team" onAction="#handleDevTeam"/>
+   <Button fx:id="editorRoleButton" text="Editor Role" onAction="#handleEditorRole"/>
+   <Button fx:id="playerRoleButton" text="Player Role" onAction="#handlePlayerRole"/>
+   <Button fx:id="cancelButton" text="Cancel" onAction="#handleCancel"/>
+</VBox>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.MapEditMenuController"
+      spacing="10"
+      alignment="CENTER_LEFT">
+
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <Label fx:id="editingLabel" style="-fx-font-weight: bold;" />
+
+    <Label text="--- MAP EDIT MENU ---" />
+
+    <Button text="1 - Add an Industry" onAction="#onAddIndustry"/>
+    <Button text="2 - Add a City" onAction="#onAddCity"/>
+    <Button text="3 - Create a Scenario" onAction="#onCreateScenario"/>
+    <Button text="4 - Save Current Map"  onAction="#onSaveCurrentMap"/>
+    <Button text="5 - Back to Editor Menu" onAction="#onBackToEditor"/>
+    <Button text="0 - Cancel" onAction="#onCancel"/>
+</VBox>

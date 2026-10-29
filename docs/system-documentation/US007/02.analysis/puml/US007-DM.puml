@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+class Player {
+    budget
+}
+
+class Station {
+    name
+    range
+    type
+    cost
+}
+
+class Cargo {
+    type
+    quantity
+    limit
+}
+class List {
+    detail
+}
+
+Player "1" --- "1" List : views >
+List "1" -right- "*" Station : contains >
+
+Station "1" --- "*" Cargo : assigned to <
+
+@enduml

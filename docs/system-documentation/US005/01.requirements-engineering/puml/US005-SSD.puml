@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Employee
+participant ":System" as System
+
+activate Employee
+
+Employee -> System : asks to build a station
+activate System
+    System --> Employee : shows list of stations (Depot, Terminal, Station) and asks to select one
+deactivate System
+
+Employee -> System : selects station type (Depot, Terminal, Station)
+activate System
+
+    System --> Employee : asks to pick coordinates X Y
+deactivate System
+
+Employee -> System : Types requested coordinates
+activate System
+
+    alt Selected type is Station
+        System --> Employee : asks to select center position (NE, SE, NW, SW)
+        deactivate System
+        Employee -> System : selects center position
+    else Selected type is Depot or Terminal
+        activate System
+        System --> Employee : center will be automatically set as geometric center
+        deactivate System
+    end
+activate System
+    System --> Employee : proposes a station name based on closest city and station type
+    System --> Employee : asks if player wants to accept suggested name or input custom name
+deactivate System
+
+Employee -> System : confirms or rejects name
+activate System
+
+    alt Player accepts suggested name
+        System --> Employee : shows station preview with name and location
+        deactivate System
+        Employee -> System : confirms final data
+    else Player wants custom name
+        activate System
+        System --> Employee : asks player to input custom name (validating restrictions)
+        deactivate System
+        Employee -> System : types custom name
+        activate System
+        System --> Employee : shows station preview with name and location
+        deactivate System
+        Employee -> System : confirms final data
+    end
+activate System
+    System --> Employee : adds the station and confirms operation success
+deactivate System
+
+deactivate Employee
+@enduml
+
+

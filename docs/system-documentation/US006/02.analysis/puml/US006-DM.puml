@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+'left to right direction
+
+skinparam classAttributeIconSize 0
+
+hide circle
+hide methods
+
+'title Domain Model
+
+class Editor {
+}
+
+class Map {
+    name
+}
+class Player {
+budget
+}
+
+class Station {
+    name
+    range
+    type
+    cost
+}
+
+class StationUpgrade{
+      structure
+}
+
+Editor "1" -down- "1*" Map : creates >
+
+Player "1" --right- "1*" Station : buys >
+
+Player "1" -up- "1" Map : places elements  >
+
+Player "1"---"*" StationUpgrade: buys >
+
+Station "1" -left- "*" StationUpgrade : upgrades <
+
+
+
+@enduml

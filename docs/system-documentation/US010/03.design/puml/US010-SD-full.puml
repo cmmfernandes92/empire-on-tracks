@@ -1,0 +1,239 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor Player
+participant ":AssignTrainToRouteUI" as UI
+participant ":AssignTrainToRouteController" as Controller
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant ":TrainRepository" as TrainRepo
+participant ":StationRepository" as StationRepo
+participant ":Map" as Map
+participant "ownedTrainsNamesList\n:List<String>" as OwnedTrainNamesList
+participant "availableCargoTypesList\n:List<CargoType>" as CargoTypeList
+participant "pointOfRouteList\n:List<PointOfRoute>" as PORList
+participant ":Train" as Train
+participant ":Route" as Route
+participant ":Carriage" as Carriage
+
+activate Player
+Player -> UI : request to assign a train to a route
+activate UI
+
+UI --> Controller** : create()
+activate Controller
+
+UI -> Controller : getOwnedTrainNames()
+    Controller -> REPOS : getInstance()
+    activate REPOS
+        REPOS --> Controller : repositories
+    deactivate REPOS
+
+    Controller -> REPOS_SINGLETON : getTrainRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> Controller : TrainRepo
+    deactivate REPOS_SINGLETON
+
+    ' Loop: filter trains by player, return names
+    create "ownedTrainsNamesList : List<String>" as OwnedTrainNamesList
+    Controller -> TrainRepo : getAllTrains()
+    activate TrainRepo
+        loop for each train in allTrains
+            TrainRepo -> Train : getOwner()
+            activate Train
+            Train --> TrainRepo : owner
+            deactivate Train
+            alt if owner == player
+                TrainRepo -> Train : getName()
+                activate Train
+                Train --> TrainRepo : name
+                deactivate Train
+                TrainRepo -> OwnedTrainNamesList : add(name)
+                activate OwnedTrainNamesList
+                deactivate OwnedTrainNamesList
+            end
+        end
+        TrainRepo --> Controller : ownedTrainsNamesList
+    deactivate TrainRepo
+Controller --> UI : ownedTrainsNamesList
+deactivate Controller
+
+UI --> Player : shows list of owned trains
+deactivate UI
+Player -> UI : selects a train
+activate UI
+UI -> Controller : startNewRoute(trainName)
+activate Controller
+
+create "pointOfRouteList : List<PointOfRoute>" as PORList
+Controller --> PORList ** : create()
+Controller --> UI : readyToBuildRoute
+deactivate Controller
+
+loop add each PointOfRoute
+    UI -> Controller : getAvailableStations()
+    activate Controller
+        Controller -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> Controller : repositories
+        deactivate REPOS
+
+        Controller -> REPOS_SINGLETON : getStationRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> Controller : stationRepository
+        deactivate REPOS_SINGLETON
+
+        Controller -> StationRepo : getAllStations()
+        activate StationRepo
+            StationRepo --> Controller : stations
+        deactivate StationRepo
+    Controller --> UI : stations
+    deactivate Controller
+
+    UI --> Player : display all stations
+    deactivate UI
+
+    Player -> UI : selects a station
+    activate UI
+    UI -> Controller : getAvailableCargoTypes(stationId)
+    activate Controller
+     Controller -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> Controller : repositories
+            deactivate REPOS
+
+            Controller -> REPOS_SINGLETON : getStationRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> Controller : stationRepository
+            deactivate REPOS_SINGLETON
+        Controller -> StationRepo : getAvailableCargoTypes(stationId)
+        activate StationRepo
+            ' Loop for available cargo types at station
+            create "availableCargoTypesList : List<CargoType>" as CargoTypeList
+            StationRepo -> StationRepo : getStationById(stationId)
+            loop for each cargoType in station
+                alt if cargoType available
+                    StationRepo -> CargoTypeList : add(cargoType)
+                    activate CargoTypeList
+                    deactivate CargoTypeList
+                end
+            end
+            StationRepo --> Controller : availableCargoTypesList
+        deactivate StationRepo
+    Controller --> UI : availableCargoTypesList
+    deactivate Controller
+
+    UI --> Player : shows list of available cargoes \nat selected station
+
+    Player -> UI : selects cargo(es)
+
+    loop for each cargo type selected
+    UI --> Player : requests number of carriages \nto assign to cargo type
+    Player -> UI : inputs number of carriages
+    end
+    UI --> Player : asks to select cargoMode for Point-of-Route
+    Player -> UI : selects cargoMode for Point-of-Route
+
+UI -> Controller : addPointOfRoute(stationId, \nselectedCargoTypes, \nselectedCarriageCounts, mode)
+    activate Controller
+        create ":PointOfRoute" as POR
+        Controller --> POR : create(stationId, selectedCargoTypes, selectedCarriageCounts, mode)
+        Controller -> PORList : add(pointOfRoute)
+        activate PORList
+        deactivate PORList
+    Controller --> UI : pointOfRouteList
+    deactivate Controller
+
+    UI --> Player : asks if player wants to add another Point-of-Route \nor finish creating route
+end
+
+Player -> UI : selects to finish building route
+UI --> Player : shows full route summary for confirmation
+Player -> UI : confirms full route
+
+' --- Create Route from list of points ---
+UI -> Controller : assignRouteToTrain(trainName, \npointOfRouteList)
+activate Controller
+
+' --- Assign Route to Train ---
+
+    Controller -> REPOS : getInstance()
+    activate REPOS
+        REPOS --> Controller : repositories
+    deactivate REPOS
+
+    Controller -> REPOS_SINGLETON : getTrainRepository()
+    activate REPOS_SINGLETON
+        REPOS_SINGLETON --> Controller : trainRepository
+    deactivate REPOS_SINGLETON
+
+    Controller -> TrainRepo : findByName(trainName)
+    activate TrainRepo
+        TrainRepo --> Controller : train
+    deactivate TrainRepo
+
+    Controller -> Map : getRailLines()
+    activate Map
+    Map --> Controller : listOfRailLines
+    deactivate Map
+
+    Controller -> Train : canTraverseRoute(pointOfRouteList,listOfRailLines)
+            activate Train
+Train -> Train : canTraverseRoute
+        activate Train
+        Train --> Train : true
+create Route
+
+        Train --> Route : create(pointOfRouteList)
+        activate Route
+        Route --> Train : route
+        deactivate Route
+
+
+    deactivate Train
+
+    Controller -> Train : assignRoute(route)
+    activate Train
+        'Train -> Train : destroyExistingCarriages()
+
+        'Train assigns route
+        Train -> Train : assignRoute(route)
+        activate Train
+        deactivate Train
+                Train -> Route : getPointsOfRoute()
+                activate Route
+                Route --> Train : pointOfRouteList
+                deactivate Route
+        loop for each point-of-route
+        Train -> POR : getCargoCarriagesCount()
+        activate POR
+        POR --> Train : cargoCarriagesCount
+        deactivate POR
+        loop for each cargo type
+            Train --> Carriage ** : create(cargoType)
+
+            Train -> Train : addCarriage(carriage)
+            activate Train
+            deactivate Train
+        end
+        end
+    Train --> Controller : assignmentComplete
+    deactivate Train
+
+    Controller -> TrainRepo : save(train)
+    activate TrainRepo
+        TrainRepo --> Controller : saved
+    deactivate TrainRepo
+
+Controller --> UI : success
+deactivate Controller
+
+UI -> Player : displays operation success message
+
+deactivate UI
+deactivate Player
+@enduml

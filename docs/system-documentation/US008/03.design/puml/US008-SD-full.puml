@@ -1,0 +1,70 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+'hide footbox
+actor "Player" as PLAYER
+participant ":BuildLineUI" as UI
+participant ":BuildLineController" as CTRL
+participant "map\n:Map" as MAP
+participant "player\n:Player" as PLAYER_OBJ
+participant "line\n:RailLine" as RAIL_LINE
+
+activate PLAYER
+
+    PLAYER -> UI : asks to build a new rail line
+    activate UI
+        UI -> CTRL : startRailLineCreation()
+        activate CTRL
+
+            CTRL -> MAP : getAllStations()
+            activate MAP
+                MAP --> CTRL : stationList
+            deactivate MAP
+
+            CTRL --> UI : stationList
+        deactivate CTRL
+
+        UI --> PLAYER : shows station list and asks to select two
+    deactivate UI
+
+    PLAYER -> UI : selects two stations
+    activate UI
+        UI --> PLAYER : asks if the line is electrified and if it’s single/double
+    deactivate UI
+
+    PLAYER -> UI : chooses electrification and track type
+    activate UI
+        UI --> PLAYER : shows selected stations and line details,\nrequests confirmation
+    deactivate UI
+
+    PLAYER -> UI : confirms data
+    activate UI
+        UI -> CTRL : createRailLine(stationA, stationB,\nisElectrified, isDouble)
+        activate CTRL
+
+            CTRL -> PLAYER_OBJ : canAffordLine(cost)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> CTRL : true/false
+            deactivate PLAYER_OBJ
+
+            alt if budget is valid
+                CTRL -> PLAYER_OBJ : buildRailLine(stationA, stationB,\nisElectrified, isDouble)
+                activate PLAYER_OBJ
+                    PLAYER_OBJ --> RAIL_LINE** : create(...)
+                    PLAYER_OBJ -> MAP : addRailLine(railLine)
+                    deactivate PLAYER_OBJ
+                CTRL --> UI : railLine
+            else
+                CTRL --> UI : operation failed (insufficient budget)
+            end
+
+        deactivate CTRL
+        UI --> PLAYER : shows operation result
+    deactivate UI
+
+deactivate PLAYER
+@enduml

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.SelectScenarioController"
+      spacing="15" alignment="CENTER" style="-fx-padding:20">
+    <Label text="Choose a Scenario"/>
+    <ListView fx:id="list" prefWidth="300" prefHeight="220"/>
+    <Button text="Start" onAction="#handleStart"/>
+</VBox>

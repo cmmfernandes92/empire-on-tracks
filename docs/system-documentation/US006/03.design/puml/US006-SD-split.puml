@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as PLAYER
+
+participant ":UpgradeStationUI" as UI
+participant ":UpgradeStationController" as CTRL
+participant "repositories\n:Repositories" as REPOS
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant ":Map" as MAP
+participant ":Simulation" as SIM
+participant ":GameState" as GAME
+participant ":Station" as STATION
+participant ":Building" as BUILDING
+participant ":BuildingType" as BUILDING_TYPE
+participant ":Player" as PLAYER_OBJ
+
+activate PLAYER
+
+    PLAYER -> UI : wants to upgrade a station
+    activate UI
+
+        UI -> CTRL : startUpgrade()
+        activate CTRL
+
+            CTRL -> REPOS : getInstance()
+            REPOS --> CTRL : repositories
+
+            CTRL -> REPOS : getMapRepository()
+            REPOS --> CTRL : mapRepository
+
+            CTRL -> MAP_REPO : getCurrentMap()
+            MAP_REPO --> CTRL : currentMap
+
+            CTRL -> UI : request station name and upgrade type
+        deactivate CTRL
+
+        UI --> PLAYER : prompt input
+    deactivate UI
+
+    PLAYER -> UI : submits station name and upgrade type
+    activate UI
+        UI -> CTRL : submitUpgradeRequest(name, type)
+        activate CTRL
+
+            CTRL -> MAP : getStationByName(name)
+            MAP --> CTRL : station
+
+            ref over CTRL
+                Retrieve and Validate Building Type
+            end ref
+
+            ref over CTRL
+                Apply Building Upgrade
+            end ref
+
+        deactivate CTRL
+    deactivate UI
+
+deactivate PLAYER
+@enduml

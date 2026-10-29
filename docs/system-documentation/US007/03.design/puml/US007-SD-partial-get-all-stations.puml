@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+autonumber 2
+
+participant ":StationController" as CTRL
+participant "map\n:Map" as REPOS
+participant "Map \n :Station" as REPOS_SINGLETON
+
+-> CTRL : getAllStations()
+activate CTRL
+autonumber 2.1
+group Get List of Stations
+CTRL -> REPOS : getStation()
+activate REPOS
+REPOS --> CTRL: listStation
+deactivate REPOS
+
+CTRL -> REPOS_SINGLETON : getAllNamesStation
+activate REPOS_SINGLETON
+loop
+    REPOS_SINGLETON -> REPOS_SINGLETON : getname()
+end
+REPOS_SINGLETON --> CTRL: listStationName
+deactivate REPOS_SINGLETON
+end
+autonumber 3
+
+<-- CTRL: displays(listStationName)
+deactivate CTRL
+@enduml

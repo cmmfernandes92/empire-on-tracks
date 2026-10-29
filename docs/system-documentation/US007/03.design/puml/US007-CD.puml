@@ -1,0 +1,79 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+
+skinparam classAttributeIconSize 0
+
+'left to right direction
+
+class Player {
+}
+
+class Station {
+    - id : String
+    - name : String
+    - type : String
+    - range : int
+    - cost : double
+
+    + getName()
+    + getUpgrades()
+    + getCargoes()
+}
+
+class Building {
+    - type : String
+    - dateAdded : Date
+    - isActive : boolean
+}
+
+class Cargo {
+    - type : String
+    - quantity : int
+    - isSupply : boolean
+}
+
+class Map {
+    + getStation()
+    + getAllNamesStation()
+    + getDetails()
+}
+
+
+class ListStationController {
+    + StationController()
+    + getAllStations()
+    + getStationDetails(stationId)
+    - getStationByName(name)
+}
+
+note right of ListStationController
+    Station details are retrieved
+    from selected station ID
+end note
+
+
+
+class StationListUI {
+}
+
+' Relationships
+StationListUI .> ListStationController
+
+ListStationController ..> Player
+ListStationController ..> Station
+ListStationController ..> Map
+
+
+Map --> "*" Station : stations
+
+
+Station  o--  Building : upgrades
+Station  o--  Cargo : cargoes
+
+
+
+@enduml

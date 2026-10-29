@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+
+    Player -> System : asks to create a new railway line
+    activate System
+
+        System --> Player : shows existing stations and asks to select two of them
+    deactivate System
+
+    Player -> System : selects two stations
+    activate System
+
+        System --> Player : asks to select line details (i.e. if it's electrified,\n if it's single or double)
+    deactivate System
+
+    Player -> System : selects railway line details
+    activate System
+
+        System --> Player : shows all data and requests confirmation
+    deactivate System
+
+    Player -> System : confirms data
+    activate System
+
+        System --> Player : displays operation success
+    deactivate System
+@enduml

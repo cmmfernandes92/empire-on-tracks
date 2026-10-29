@@ -1,0 +1,19 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+
+    Player -> System : asks to list all trains
+    activate System
+
+        System --> Player : displays all owned trains grouped by locomotive type,\nsorted alphabetically, showing locomotive details and current cargoes
+    deactivate System
+
+@enduml

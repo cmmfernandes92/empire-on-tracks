@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.AddCityFormController"
+      spacing="10" alignment="TOP_LEFT">
+    <fx:define>
+        <ToggleGroup fx:id="methodGroup"/>
+    </fx:define>
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <Label text="Add New City" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="City Name:" minWidth="100"/>
+        <TextField fx:id="nameField" prefWidth="200"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="X Position:" minWidth="100"/>
+        <TextField fx:id="xField" prefWidth="80"/>
+        <Label text="Y Position:"/>
+        <TextField fx:id="yField" prefWidth="80"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="House Blocks:" minWidth="100"/>
+        <TextField fx:id="blocksField" promptText=">=1" prefWidth="80"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Assignment:" minWidth="100"/>
+        <RadioButton text="Manual" fx:id="manualRadio" toggleGroup="$methodGroup"/>
+        <RadioButton text="Auto"   fx:id="autoRadio"   toggleGroup="$methodGroup"/>
+    </HBox>
+
+    <VBox fx:id="manualBox" spacing="5">
+        <Label text="Manual block coords (X,Y per line):"/>
+        <TextArea fx:id="coordsArea" prefRowCount="4" promptText="e.g. 2,3\n4,5\n…"/>
+    </VBox>
+
+    <Label fx:id="messageLabel" style="-fx-text-fill: red;"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cancel" onAction="#onCancel"/>
+        <Button text="Add City" onAction="#onAddCity"/>
+    </HBox>
+</VBox>

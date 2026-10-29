@@ -1,0 +1,138 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+
+' UI Layer
+package "UI"{
+class AddIndustryUI {
+
+}
+}
+' Controller Layer
+package "Controller"{
+class AddIndustryController {
+  + AddIndustryController()
+  + getAllMaps():
+  + getIndustryTypes():
+  + addIndustry(mapName, industryName, positionX, positionY): Industry
+}
+}
+' Domain Model
+package "Domain"{
+package "Model" {
+class Map {
+  - name: String
+  -size:Size
+  + addIndustry(Industry,positionX,positionY)
+}
+
+
+interface Industry {
+}
+
+class PrimaryIndustry {
++PrimaryIndustry(primary,positionX,positionY)
+}
+
+class TransformingIndustry {
++TransformingIndustry(transforming,positionX,positionY)
+}
+
+class MixedIndustry {
++MixedIndustry(mixed,positionX,positionY)
+}
+
+class Location {
+  - positionX: int
+  - positionY: int
+  Location(positionX,positionY)
+}
+}
+package "Repository"{
+' Repositories
+class Repositories {
+  - Repositories()
+  + getInstance()
+  + getMapRepository()
+  + getIndustryRepository()
+}
+
+class MapRepository {
+  + getMapList()
+  + findMapbyName(mapName)
+}
+
+class IndustryTypeRepository {
+  + getAll()
+  + findIndustryTypeByName(industryName)
+}
+}
+
+' Mappers and DTOs
+package "Mapper"{
+class MapMapper {
+  + toDTO(map):
+  + toDTOList(listmaps):
+}
+
+class IndustryTypeMapper {
+  + toDTO(industry)
+  + toDTOList(listIndustry)
+}
+package "DTO"{
+class MapDTO {
+  - id: String
+  - name: String
+  - width: int
+  - height: int
+}
+
+class IndustryDTO {
+  - id: String
+  - type: String
+}
+}
+}
+}
+
+' Associations
+AddIndustryUI ..> AddIndustryController : uses
+
+AddIndustryController ..> Repositories
+AddIndustryController ..> MapRepository
+AddIndustryController ..> IndustryTypeRepository
+AddIndustryController ..> MapMapper
+AddIndustryController ..> IndustryTypeMapper
+AddIndustryController ..> MapDTO
+AddIndustryController ..> IndustryDTO
+AddIndustryController ..> Map
+
+Repositories --> MapRepository : provides
+Repositories --> IndustryTypeRepository : provides
+Repositories -> Repositories :  instance
+
+MapRepository --> "*" Map : stores
+IndustryTypeRepository --> "*" Industry : industry
+
+Map -> "*" Industry : industry
+Map ..> PrimaryIndustry
+Map ..> TransformingIndustry
+Map ..>MixedIndustry
+
+
+Industry <|... PrimaryIndustry
+Industry <|... TransformingIndustry
+Industry <|... MixedIndustry
+
+PrimaryIndustry -->Location:positioned
+TransformingIndustry --> Location : positioned
+MixedIndustry --> Location : positioned
+
+IndustryTypeMapper ..> IndustryDTO
+IndustryTypeMapper ..>Industry
+MapMapper ..> MapDTO
+MapMapper ..>Map
+@enduml

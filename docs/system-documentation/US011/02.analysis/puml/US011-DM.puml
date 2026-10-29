@@ -1,0 +1,96 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class Player {
+}
+
+class Simulation {
+    isRunning
+    budget
+}
+
+class Map {
+    name
+}
+
+class Station {
+    capacity
+    name
+}
+
+class Train {
+    name
+    plateNumber
+}
+
+class Route {
+    starts
+    ends
+}
+
+class RailLine {
+    cost
+    isElectrified
+    isDouble
+}
+
+class Locomotive {
+    powerSource
+    acceleration
+    buyCost
+    startYear
+    fuelCost
+    maintenanceCost
+}
+
+class Carriage {
+    capacity
+}
+
+class CargoType {
+    type
+    cost
+}
+
+class Cargo {
+    quantity
+}
+
+class LocomotiveType {
+    type
+}
+
+' RELATIONSHIPS
+Player "1" -- "1..*" Station : buys >
+Player "1" -- "1..*" Map : places elements on >
+Player "1" - "1..*" Train : owns >
+Player "1" - "1..*" RailLine : builds >
+Player "1" - "*" Simulation : runs >
+
+Train "1" -- "1..*" RailLine : uses >
+Train "1" -- "1..*" Route : follows >
+Train "1" -- "1" Locomotive : is composed of >
+Train "1" -- "*" Carriage : is composed of >
+
+Route "1" -- "1..*" RailLine : uses >
+Route "1" -- "2..*" Station : connects >
+
+Station "2" - "1..*" RailLine : connects <
+
+Map "1" - "*" Station : contains >
+
+Carriage "1..*" -- "1" CargoType : has >
+
+CargoType "1" -- "1" Cargo : is from a certain <
+
+
+Simulation "1" --- "1" Map : starts/pauses >
+
+LocomotiveType "1" -- "1..*" Locomotive : is from <
+
+@enduml

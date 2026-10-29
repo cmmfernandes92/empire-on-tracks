@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.ListTrainsViewController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+
+    <Label text="UC11 – Player Trains"
+           style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="table" prefWidth="640" prefHeight="260">
+        <columns>
+            <TableColumn fx:id="colType"  text="Locomotive Type" prefWidth="160"/>
+            <TableColumn fx:id="colName"  text="Train Name"      prefWidth="200"/>
+            <TableColumn fx:id="colCargo" text="Current Cargoes" prefWidth="260"/>
+        </columns>
+    </TableView>
+
+    <Button text="Close" onAction="#handleClose"/>
+</VBox>

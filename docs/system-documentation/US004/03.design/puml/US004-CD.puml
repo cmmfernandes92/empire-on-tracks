@@ -1,0 +1,78 @@
+@startuml
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+package "UI" {
+    class CreateScenarioUI
+}
+
+package "Core" {
+
+    package "Controller" {
+        class CreateScenarioController {
+            + create(map)
+            + getLocomotiveTypes()
+            + addAvailableTypes(type)
+            + getIndustries()
+            + defineProductionRate(rate, IndustryDTO)
+            + selectBehavior(behavior)
+            + createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+        }
+    }
+
+    package "Mapper" {
+        class IndustryMapper {
+            + toDTO(listIndustry)
+        }
+    }
+
+    package "Domain" {
+        class Map {
+            + addAvailableTypes(type)
+            + getIndustries()
+            + defineProductionRate(rate, IndustryDTO)
+            + selectBehavior(behavior)
+            + createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+            + findIndustryByName(industryName)
+        }
+
+        class Scenario {
+            + addAvailableTypes(type)
+            + defineProductionRate(rate, IndustryDTO)
+            + selectBehavior(behavior)
+            + validateYears(startDate, endDate)
+            + createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+        }
+
+        class Period {
+            + create(startDate, endDate)
+        }
+
+        class LocomotiveType {
+            + getLocomotiveTypes()
+        }
+    }
+
+    package "DTO" {
+        class IndustryDTO {
+            + create(industry)
+        }
+    }
+}
+
+CreateScenarioUI .> Core.Controller.CreateScenarioController
+
+Core.Controller.CreateScenarioController ..> Core.Domain.Map
+Core.Domain.Map --> "*" Core.Domain.Scenario : creates
+Core.Domain.Scenario --> "1" Core.Domain.Period : creates
+
+Core.Controller.CreateScenarioController ..> Core.Domain.LocomotiveType
+Core.Controller.CreateScenarioController ..> Core.Mapper.IndustryMapper
+
+Core.Mapper.IndustryMapper ..> Core.DTO.IndustryDTO
+
+Core.Domain.Map ..> Core.DTO.IndustryDTO
+
+@enduml

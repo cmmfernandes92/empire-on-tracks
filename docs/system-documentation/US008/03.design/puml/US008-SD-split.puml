@@ -1,0 +1,55 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+autonumber
+
+actor "Player" as PLAYER
+participant ":BuildLineUI" as UI
+participant ":BuildLineController" as CTRL
+participant "map\n:Map" as MAP
+participant "player\n:Player" as PLAYER_OBJ
+participant "line\n:RailLine" as RAIL_LINE
+
+activate PLAYER
+
+    PLAYER -> UI : asks to build a new rail line
+    activate UI
+
+        UI -> CTRL : startRailLineCreation()
+        activate CTRL
+
+            ref over CTRL, MAP
+                Get Station List
+            end ref
+
+        CTRL --> UI : stationList
+        deactivate CTRL
+
+        UI --> PLAYER : shows station list and asks to select two
+    deactivate UI
+
+    PLAYER -> UI : selects two stations
+    activate UI
+        UI --> PLAYER : asks if the line is electrified and if it’s single/double
+    deactivate UI
+
+    PLAYER -> UI : chooses electrification and track type
+    activate UI
+        UI --> PLAYER : shows selected stations and line details,\nrequests confirmation
+    deactivate UI
+
+    PLAYER -> UI : confirms data
+    activate UI
+
+        ref over UI, CTRL, PLAYER_OBJ, RAIL_LINE, MAP
+            Create Rail Line
+        end ref
+
+        UI --> PLAYER : shows operation result
+    deactivate UI
+
+deactivate PLAYER
+@enduml

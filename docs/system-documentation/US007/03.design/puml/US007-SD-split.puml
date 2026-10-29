@@ -1,0 +1,41 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+autonumber
+
+actor "Player" as PLAYER
+participant ":StationListUI" as UI
+participant ":StationController" as CTRL
+
+activate PLAYER
+
+PLAYER -> UI : requests station list
+activate UI
+UI -> CTRL : getAllStations()
+activate CTRL
+
+ref over CTRL
+Get All Stations
+end ref
+
+CTRL --> UI : displays(listStationName)
+deactivate CTRL
+UI --> PLAYER : displays station list
+deactivate UI
+
+PLAYER -> UI : selects a station
+activate UI
+UI -> CTRL : getStationDetails(stationId)
+activate CTRL
+
+ref over CTRL
+Get Station Details
+end ref
+
+CTRL --> UI : displays(stationDetails)
+deactivate CTRL
+UI --> PLAYER : shows station details\n(buildings and cargoes)
+deactivate UI
+deactivate PLAYER
+@enduml

@@ -1,0 +1,34 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":BuildStationController" as CTRL
+participant ":Simulation" as SIM
+participant ":StationType" as ST_TYPE
+autonumber 12
+ -> CTRL :submitStationType (type)
+ activate CTRL
+autonumber 12.1
+
+
+CTRL -> SIM : getCurrentDate()
+activate SIM
+SIM --> CTRL : currentDate
+deactivate SIM
+
+CTRL -> ST_TYPE : retrieve(type)
+activate ST_TYPE
+ST_TYPE --> CTRL : stationType
+deactivate ST_TYPE
+
+alt stationType.name == "Station"
+    CTRL -> CTRL : expect center position input
+else stationType.name == "Depot" or "Terminal"
+    CTRL -> CTRL : set center to geometric automatically
+end
+
+CTRL -> CTRL : prepare to receive coordinates
+
+@enduml
+

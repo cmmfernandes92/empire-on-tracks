@@ -1,0 +1,46 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class Editor {
+}
+
+class Map {
+    name
+}
+
+class Size {
+    length
+    width
+}
+
+
+class City {
+    name
+}
+
+class HouseBlock {
+    people
+}
+
+
+class Location {
+    positionX
+    positionY
+}
+
+Editor "1" -down- "1..*" Map : creates >
+Editor "1" -right- "*" City : adds >
+
+Map "1" - "1" Size : has >
+Map "1" - "*" City : contains >
+
+City "1" -- "1..*" HouseBlock : contains >
+City "1" -- "1" Location : bears >
+Location "1" -- "1" HouseBlock : have <
+
+@enduml

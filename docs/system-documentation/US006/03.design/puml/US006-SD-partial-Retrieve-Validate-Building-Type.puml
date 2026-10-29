@@ -1,0 +1,43 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":UpgradeStationController" as CTRL
+participant ":BuildingType" as BUILDING_TYPE
+participant ":Simulation" as SIM
+participant ":Station" as STATION
+
+autonumber 15
+
+-> CTRL :Retrieve and Validate Building Type
+
+activate CTRL
+
+autonumber 15.1
+
+CTRL -> BUILDING_TYPE : retrieve(type)
+activate BUILDING_TYPE
+BUILDING_TYPE --> CTRL : buildingType
+deactivate BUILDING_TYPE
+
+alt buildingType == TELEPHONE
+    CTRL -> SIM : getCurrentDate()
+    activate SIM
+    SIM --> CTRL : currentDate
+    deactivate SIM
+
+    alt currentDate < telephoneAvailableDate
+        CTRL -> CTRL : raiseError(\"Telephone not yet available\")
+    end
+end
+
+CTRL -> STATION : hasBuilding(buildingType)
+activate STATION
+STATION --> CTRL : true / false
+deactivate STATION
+
+alt building already present or not permitted
+    CTRL -> CTRL : raiseError(\"Building already exists or is not allowed\")
+end
+@enduml

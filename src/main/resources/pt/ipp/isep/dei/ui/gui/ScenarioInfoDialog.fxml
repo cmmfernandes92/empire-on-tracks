@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.ScenarioInfoDialogController"
+      spacing="12" alignment="TOP_LEFT">
+
+    <padding><Insets top="20" right="25" bottom="20" left="25"/></padding>
+
+    <Label text="Create Scenario"
+           style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+
+    <!-- dados básicos -->
+    <HBox spacing="10">
+        <Label text="Name:"   minWidth="110"/>
+        <TextField fx:id="nameField" prefWidth="220"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="Start Year:" minWidth="110"/>
+        <TextField fx:id="startYearField" prefWidth="220"
+                   promptText=">= 1804"/>
+    </HBox>
+
+    <HBox spacing="10">
+        <Label text="End Year:"   minWidth="110"/>
+        <TextField fx:id="endYearField"  prefWidth="220"
+                   promptText="≥ Start"/>
+    </HBox>
+
+    <Separator/>
+
+    <!-- locomotives -->
+    <Label text="Locomotive Types:"/>
+    <ScrollPane prefHeight="120" fitToWidth="true">
+        <VBox fx:id="locoBox" spacing="6">
+            <padding>
+                <Insets top="10" right="0" bottom="10" left="10"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+
+    <Separator/>
+
+    <!-- production -->
+    <TitledPane text="Adjust Production Rates"
+                expanded="false">
+        <VBox spacing="8">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <HBox spacing="8">
+                <Label text="Industry:"/>
+                <ComboBox fx:id="industryCombo"
+                          prefWidth="250"/>
+            </HBox>
+
+            <HBox spacing="8">
+                <Label text="Multiplier:"/>
+                <TextField fx:id="rateField" promptText="1.2"
+                           prefWidth="80"/>
+                <Button  text="Add"
+                         onAction="#onAddRate"/>
+            </HBox>
+        </VBox>
+    </TitledPane>
+
+    <!-- mixed industries -->
+    <TitledPane text="Mixed Industry Behaviour"
+                expanded="false">
+        <VBox spacing="8">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+
+            <HBox spacing="8">
+                <Label text="Industry:"/>
+                <ComboBox fx:id="mixedCombo" prefWidth="250"/>
+            </HBox>
+
+            <HBox spacing="8">
+                <Label text="Behaviour:"/>
+                <ComboBox fx:id="behaviourCombo"
+                          prefWidth="120"/>
+            </HBox>
+
+            <HBox spacing="8">
+                <Label text="Input:"/>
+                <ComboBox fx:id="inputCargoCombo" prefWidth="120"/>
+                <Label text="Output:"/>
+                <ComboBox fx:id="outputCargoCombo" prefWidth="120"/>
+            </HBox>
+
+            <Button text="Add"
+                    onAction="#onAddMixed"/>
+        </VBox>
+    </TitledPane>
+
+    <Label fx:id="messageLabel"
+           style="-fx-text-fill: red;"/>
+
+    <!-- buttons -->
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cancel" onAction="#onCancel"/>
+        <Button text="Create" onAction="#onConfirm"/>
+    </HBox>
+</VBox>

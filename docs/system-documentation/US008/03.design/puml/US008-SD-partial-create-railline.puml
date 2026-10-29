@@ -1,0 +1,40 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+participant ":BuildLineUI" as UI
+participant ":BuildLineController" as CTRL
+participant "map\n:Map" as MAP
+participant "player\n:Player" as PLAYER_OBJ
+participant "line\n:RailLine" as RAIL_LINE
+
+autonumber 9
+-> UI:confirms data
+
+autonumber 9.1
+activate CTRL
+    group Check Budget and Build Line
+UI -> CTRL : createRailLine(stationA, stationB,\nisElectrified, isDouble)
+        CTRL -> PLAYER_OBJ : canAffordLine(cost)
+        activate PLAYER_OBJ
+        PLAYER_OBJ --> CTRL : true/false
+        deactivate PLAYER_OBJ
+
+        alt if budget is valid
+            CTRL -> PLAYER_OBJ : buildRailLine(stationA, stationB,\nisElectrified, isDouble)
+            activate PLAYER_OBJ
+                PLAYER_OBJ --> RAIL_LINE : create(...)
+                PLAYER_OBJ -> MAP : addRailLine(railLine)
+            deactivate PLAYER_OBJ
+            CTRL --> UI : railLine
+        else
+            CTRL --> UI : operation failed (insufficient budget)
+        end
+
+    end
+autonumber 10
+<-- UI : shows operation result
+deactivate CTRL
+@enduml

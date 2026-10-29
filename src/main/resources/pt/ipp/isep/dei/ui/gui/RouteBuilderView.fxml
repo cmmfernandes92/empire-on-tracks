@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.RouteBuilderController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+
+    <Label text="UC10 – Assign Train to Route"
+           style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <!-- 1) escolher comboio -->
+    <HBox spacing="6" alignment="CENTER">
+        <Label text="Train:"/>
+        <ComboBox fx:id="trainComboBox" prefWidth="260"/>
+    </HBox>
+
+    <!-- 2) tabela com pontos de rota já adicionados -->
+    <TableView fx:id="porTable" prefWidth="660" prefHeight="180">
+        <columns>
+            <TableColumn fx:id="colOrder"  text="#"          prefWidth="40"/>
+            <TableColumn fx:id="colStation" text="Station"   prefWidth="200"/>
+            <TableColumn fx:id="colCargo"   text="Cargoes"   prefWidth="240"/>
+            <TableColumn fx:id="colMode"    text="Mode"      prefWidth="140"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Add Stop"      onAction="#handleAddStop"/>
+        <Button text="Remove Last"   onAction="#handleRemoveLast"/>
+    </HBox>
+
+    <HBox spacing="14" alignment="CENTER">
+        <Button text="Assign Route"  onAction="#handleAssign"/>
+        <Button text="Cancel"        onAction="#handleCancel"/>
+    </HBox>
+</VBox>

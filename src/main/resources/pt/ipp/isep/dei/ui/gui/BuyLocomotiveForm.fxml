@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.BuyLocomotiveFormController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 22;">
+
+    <Label text="UC9 – Buy a Locomotive"
+           style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="locomotiveTable" prefWidth="600" prefHeight="200">
+        <columns>
+            <TableColumn fx:id="colIndex" text="#"     prefWidth="40"/>
+            <TableColumn fx:id="colId"    text="Model" prefWidth="150"/>
+            <TableColumn fx:id="colCost"  text="Cost"  prefWidth="140"/>
+            <TableColumn fx:id="colType"  text="Type"  prefWidth="120"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="6" alignment="CENTER">
+        <Label text="Train name:"/>
+        <TextField fx:id="trainNameField" prefWidth="240"/>
+    </HBox>
+
+    <Label fx:id="budgetLabel" style="-fx-font-weight: bold;"/>
+
+    <HBox spacing="12" alignment="CENTER">
+        <Button text="Buy"    onAction="#handleBuy"/>
+        <Button text="Cancel" onAction="#handleCancel"/>
+    </HBox>
+</VBox>

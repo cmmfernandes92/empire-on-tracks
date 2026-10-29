@@ -1,0 +1,33 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+participant ":BuildStationController" as CTRL
+participant ":Map" as MAP
+
+autonumber 14
+
+-> CTRL : submitCoordinates(x, y)
+activate CTRL
+autonumber 14.1
+
+CTRL -> CTRL : generate suggested name from nearest city
+
+alt player accepts suggested name
+    CTRL -> CTRL : use suggested name
+else player provides custom name
+    CTRL -> MAP : isStationNameDuplicate(customName)
+    activate MAP
+    MAP --> CTRL : true or false
+    deactivate MAP
+
+    alt name is duplicated
+        CTRL -> CTRL : mark name as invalid
+    else
+        CTRL -> CTRL : use custom name
+    end
+end
+
+CTRL -> CTRL : prepare station preview data (name, location)
+@enduml

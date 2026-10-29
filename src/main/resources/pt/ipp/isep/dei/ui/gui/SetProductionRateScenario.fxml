@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pt.ipp.isep.dei.javafxproj.SetProductionRateController"
+      alignment="TOP_CENTER" spacing="15">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="------ Available Industries ------"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <ListView fx:id="industryListView" prefHeight="200" prefWidth="300" />
+
+    <Label fx:id="currentRateLabel" text="Current Production Rate: -" />
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Percentage Change:" />
+        <TextField fx:id="percentageField" promptText="e.g., +20, -10" prefWidth="80" />
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Apply Change" onAction="#handleApply" />
+        <Button text="Back" onAction="#handleBack" />
+    </HBox>
+
+</VBox>

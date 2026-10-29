@@ -1,0 +1,56 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":System" as System
+
+activate Player
+
+    Player -> System : requests to assign a train to a route
+    activate System
+        System --> Player : shows list of owned trains
+    deactivate System
+
+    Player -> System : selects a train
+    loop for each route point
+    activate System
+        System --> Player : displays all stations
+    deactivate System
+
+    Player -> System : selects a station
+    activate System
+            System --> Player : shows list of available cargoes at selected station
+        deactivate System
+    Player -> System : selects cargo(es)
+        loop for each cargo type selected
+
+        activate System
+                System --> Player : requests number of carriages to assign to cargo type
+            deactivate System
+            "Player" -> System : inputs number of carriages
+                    activate System
+    end
+            System --> Player :  asks cargoMode for Point-of-Route
+        deactivate System
+        "Player" -> System : selects cargoMode for Point-of-Route
+                            activate System
+        System --> Player :  asks if player wants to add another Point-of-Route \nor finish creating route
+        deactivate System
+    end
+
+    Player -> System : selects to finish building route
+    activate System
+        System --> Player : shows full route summary for confirmation
+    deactivate System
+
+    Player -> System : confirms full route
+    activate System
+        System --> Player : displays operation success message
+    deactivate System
+
+deactivate Player
+@enduml

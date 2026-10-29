@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.ListStationsViewController"
+      spacing="8" alignment="CENTER" style="-fx-padding: 18;">
+
+    <Label text="== STATIONS ==" style="-fx-font-size: 16; -fx-font-weight: bold;"/>
+
+    <TableView fx:id="table" prefWidth="620">
+        <columns>
+            <TableColumn fx:id="colIndex" text="#"         prefWidth="50"/>
+            <TableColumn fx:id="colName"  text="Name"      prefWidth="190"/>
+            <TableColumn fx:id="colLocation" text="Location" prefWidth="180"/>
+            <TableColumn fx:id="colCargo" text="Cargoes"   prefWidth="200"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Show Details" onAction="#handleShowDetails"/>
+        <Button text="Close"        onAction="#handleClose"/>
+    </HBox>
+</VBox>

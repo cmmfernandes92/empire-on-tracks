@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.AddStopController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 18;">
+
+    <Label fx:id="title" style="-fx-font-size: 15; -fx-font-weight: bold;"/>
+
+    <HBox spacing="6" alignment="CENTER">
+        <Label text="Station:"/>
+        <ComboBox fx:id="stationComboBox" prefWidth="240"/>
+    </HBox>
+
+    <Label text="Cargo types (check at least one):"/>
+    <ListView fx:id="cargoListView"
+              prefWidth="240"
+              prefHeight="110"/>
+
+    <HBox spacing="6" alignment="CENTER">
+        <Label text="Mode:"/>
+        <ComboBox fx:id="modeComboBox" prefWidth="150"/>
+    </HBox>
+
+    <Button text="Confirm Stop" onAction="#handleConfirm"/>
+</VBox>

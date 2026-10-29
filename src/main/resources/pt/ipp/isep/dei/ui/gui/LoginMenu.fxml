@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.LoginMenuController"
+      alignment="CENTER" spacing="10" style="-fx-padding: 30;">
+    <Label text="--- AUTH MENU: Login ---" style="-fx-font-size: 16px;"/>
+
+    <Label text="ID:"/>
+    <TextField fx:id="idField" promptText="Enter your ID"/>
+
+    <Label text="Password:"/>
+    <PasswordField fx:id="passwordField" promptText="Enter your password"/>
+
+    <Button fx:id="loginButton" text="Login" onAction="#handleLogin"/>
+    <Label fx:id="errorLabel" text="" style="-fx-text-fill: red;"/>
+</VBox>
+

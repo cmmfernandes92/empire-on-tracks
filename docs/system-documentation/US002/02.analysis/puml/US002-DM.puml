@@ -1,0 +1,65 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+'title US02 - Add Industry to Map (Domain Model)
+
+class Editor {
+}
+class Map {
+    name
+
+}
+class Size{
+    width
+    length
+}
+
+class Location{
+    positionX
+    positionY
+
+}
+class Industry {
+    production
+}
+class PrimaryIndustry{
+    name
+
+}
+class TransformingIndustry{
+   name
+}
+class  MixedIndustry{
+    name
+}
+class Cargo {
+    quantity
+}
+
+class CargoType {
+    type
+    cost
+}
+
+' --- Relacionamentos ---
+Editor "1" -down- "1*" Map : creates >
+Editor "1" -- "1*" Industry : add >
+Map "1" - "1" Size : has >
+
+
+
+Industry "1"<|--"1" PrimaryIndustry
+Industry "1"<|--"1" TransformingIndustry
+Industry "1"<|--"1" MixedIndustry
+Industry "1" - "1" Location : has >
+
+TransformingIndustry "1"---"1..*" Cargo:consumes >
+MixedIndustry "1"---"1..*" Cargo:consumes >
+Industry "1" -- "1..*" Cargo : produces >
+CargoType "1" -- "1" Cargo : is from a certain <
+@enduml

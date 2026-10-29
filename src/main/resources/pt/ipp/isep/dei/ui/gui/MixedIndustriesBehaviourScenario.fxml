@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pt.ipp.isep.dei.javafxproj.MixedIndustriesController"
+      alignment="TOP_CENTER" spacing="15">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="------ Mixed Industries ------"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+
+    <ListView fx:id="mixedListView" prefHeight="150" prefWidth="300" />
+
+    <Label text="Choose a behavior:" />
+
+    <HBox spacing="10" alignment="CENTER">
+        <RadioButton fx:id="importRadio" text="Import" />
+        <RadioButton fx:id="exportRadio" text="Export" />
+        <RadioButton fx:id="transformRadio" text="Transform" />
+    </HBox>
+
+    <HBox spacing="20" alignment="CENTER">
+        <Button text="Confirm" onAction="#handleConfirm"/>
+        <Button text="Back" onAction="#handleBack"/>
+    </HBox>
+
+</VBox>

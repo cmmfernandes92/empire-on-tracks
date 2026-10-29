@@ -1,0 +1,162 @@
+@startuml
+'skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+autonumber
+
+actor ":Player" as PlayerActor
+participant ":BuyLocomotiveUI" as UI
+participant ":BuyLocomotiveController" as Controller
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "time \n:Time" as Time
+participant "locomotiveRepository\n:LocomotiveRepository" as LOCO_REPO
+participant "locomotive \n:Locomotive" as Locomotive
+participant ":LocomotiveMapper" as LocoMapper
+participant "availableLocomotiveList \n:List<Locomotive>" as LocoList
+participant "locomotiveListDTO \n:LocomotiveListDTO" as LocoListDTO
+participant "locomotiveDTO \n:LocomotiveDTO" as LocoDTO
+participant ":Player" as PlayerDomain
+
+activate PlayerActor
+    PlayerActor -> UI : requests to buy a locomotive
+    activate UI
+
+        UI --> Controller** : create()
+
+        UI -> Controller : getAvailableLocomotives()
+        activate Controller
+
+            Controller -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> Controller : repositories
+            deactivate REPOS
+
+            Controller -> REPOS_SINGLETON : getLocomotiveRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> Controller : LocomotiveRepository
+            deactivate REPOS_SINGLETON
+
+            Controller -> Time : getCurrentDate()
+            activate Time
+            Time --> Controller : currentDate
+            deactivate Time
+
+            Controller -> LOCO_REPO : getAvailableLocomotives(currentDate)
+            activate LOCO_REPO
+                LOCO_REPO --> LocoList ** : create()
+                 loop for each locomotive
+                        LOCO_REPO -> Locomotive : isAvailable(currentDate)
+                        activate Locomotive
+                            Locomotive --> LOCO_REPO : true
+                        deactivate Locomotive
+
+                            LOCO_REPO -> LocoList : add(locomotive)
+                            activate LocoList
+                        end
+
+                    LocoList --> LOCO_REPO : availableLocomotiveList
+                    deactivate LocoList
+                LOCO_REPO --> Controller : availableLocomotiveList
+            deactivate LOCO_REPO
+
+            Controller -> LocoMapper : toDTO(availableLocomotiveList)
+            activate LocoMapper
+            LocoMapper --> LocoListDTO** : create()
+                loop for each locomotive in availableLocomotiveList
+                    LocoMapper -> LocoList : get(i)
+                    activate LocoList
+                    deactivate LocoList
+
+                    LocoMapper -> LocoMapper : toDTO(locomotive)
+                                        activate LocoMapper
+                                        LocoMapper --> LocoDTO** : create()
+                                        deactivate LocoMapper
+                    LocoMapper -> LocoListDTO : add(locomotiveDTO)
+                    activate LocoListDTO
+                    deactivate LocoListDTO
+                end
+                LocoMapper --> Controller : locomotiveListDTO
+            deactivate LocoMapper
+
+            Controller --> UI : locomotiveListDTO
+        deactivate Controller
+
+        UI --> PlayerActor : shows available locomotives \nand asks to select one
+    deactivate UI
+
+PlayerActor -> UI : selects a locomotive
+activate UI
+    UI -> PlayerActor : asks for train name
+deactivate UI
+
+PlayerActor -> UI : enters train name
+activate UI
+    UI -> PlayerActor : shows all data \nand requests confirmation
+deactivate UI
+
+PlayerActor -> UI : confirms data
+activate UI
+    UI -> Controller : buyLocomotiveAsTrain(locomotiveId,\n trainName)
+    activate Controller
+
+        Controller -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> Controller : repositories
+        deactivate REPOS
+
+        Controller -> REPOS_SINGLETON : getLocomotiveRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> Controller : LocomotiveRepository
+        deactivate REPOS_SINGLETON
+
+        Controller -> LOCO_REPO : findLocomotiveById(locomotiveId)
+        activate LOCO_REPO
+            LOCO_REPO --> Controller : Locomotive
+        deactivate LOCO_REPO
+
+        Controller -> PlayerDomain : buyLocomotiveAsTrain(Player, Locomotive, trainName)
+            activate PlayerDomain
+
+            PlayerDomain -> PlayerDomain : hasSufficientBudget(locomotiveCost)
+            activate PlayerDomain
+            PlayerDomain --> PlayerDomain : true
+            deactivate PlayerDomain
+
+            PlayerDomain -> PlayerDomain : deductPrice(locomotiveCost)
+                        activate PlayerDomain
+                        PlayerDomain --> PlayerDomain : true
+                        deactivate PlayerDomain
+
+             PlayerDomain -> PlayerDomain : createUniquePlateNumber()
+                        activate PlayerDomain
+                        PlayerDomain --> PlayerDomain : plateNumber
+                        deactivate PlayerDomain
+
+                create ":Train" as Train
+            PlayerDomain --> Train : create(plateNumber, trainName, \nLocomotive)
+
+
+                PlayerDomain -> PlayerDomain : addTrain(train)
+                activate PlayerDomain
+                PlayerDomain -> PlayerDomain : validateTrain(train)
+                                activate PlayerDomain
+                PlayerDomain --> PlayerDomain : true
+                deactivate PlayerDomain
+                PlayerDomain --> PlayerDomain : true
+                PlayerDomain --> Controller : success
+                                deactivate PlayerDomain
+
+
+
+
+    Controller --> UI : success
+    deactivate Controller
+
+    UI --> PlayerActor : displays purchase success
+deactivate UI
+deactivate PlayerActor
+
+@enduml

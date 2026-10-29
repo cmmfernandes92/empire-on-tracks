@@ -1,0 +1,48 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Editor
+participant ":System" as System
+
+activate Editor
+
+    Editor -> System : asks to add a city
+    activate System
+
+        System --> Editor : requests city details (name, positionX, positionY, houseBlockCount\n houseblockAssignmentMethod)
+    deactivate System
+
+    Editor -> System : types city details
+    activate System
+
+     System --> Editor : shows all data and requests confirmation
+        deactivate System
+
+        Editor -> System : confirms data
+        activate System
+
+        alt method = "manual"
+            loop for each houseblock
+                System --> Editor : request positions of house blocks
+                deactivate System
+                Editor -> System : submits positions
+                activate System
+            end
+
+        else method = "automatic"
+        end
+
+        System --> Editor : displays operation success
+        deactivate System
+
+
+
+
+
+
+
+@enduml

@@ -1,0 +1,211 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Editor" as Editor
+participant ":AddIndustryUI" as UI
+participant ":AddIndustryController" as Controller
+
+participant "map\n:Map" as Map
+participant "industry\n:Industry" as Industry
+participant "primary\n:PrimaryIndustry" as PrimaryIndustry
+participant "transformin\nTransformingIndustry" as TransformingIndustry
+participant "mixed\nMixedIndustry" as MixedIndustry
+participant ":Location" as Location
+
+participant "Repositories" as Rep
+participant "repositories\n :Repository" as Repos
+participant "mapRepository\n:MapRepository" as MapRepository
+participant "industryTypeRepository \n: IndustryTypeRepository" as IndustryRepository
+
+participant ":SizeMapper" as MapMapper
+participant "listSize\n:List<Map>" as listmap
+participant "listSizeDTO\n:List<MapDTO>" as listmapDTO
+participant "sizeDTO\n:MapDTO" as mapDTO
+
+participant ":IndustryTypeMapper" as IndustryMapper
+participant "listIndustryType\n:List<Industry>" as list
+participant "listIndustryTypeDTO\n:List<IndustryDTO>" as listDTO
+participant "industryTypeDTO\n:IndustryDTO" as objDTO
+
+
+
+
+activate Editor
+
+Editor -> UI : Ask to add an industry
+activate UI
+UI --> Controller**: create()
+UI->Controller:getAllMaps()
+activate Controller
+Controller->Rep: getInstance()
+            activate Rep
+
+            Rep-->Controller:repositories
+            deactivate Rep
+            Controller->Repos:getMapRepository()
+            activate Repos
+            Repos--> Controller:mapRepository
+            deactivate Repos
+            Controller->MapRepository:getMapList()
+            activate MapRepository
+
+            MapRepository-->listmap**:create()
+            MapRepository-->Controller:listMap
+            deactivate MapRepository
+
+            Controller-->MapMapper**:create()
+
+            Controller->MapMapper: toDTO(listMap)
+            activate MapMapper
+            MapMapper-->listmapDTO**:create()
+            loop for each Map in list
+            MapMapper->listmap:map=get(i)
+            activate listmap
+            deactivate listmap
+
+            MapMapper->MapMapper:mapDTO=toDTO(map)
+            activate MapMapper
+            MapMapper-->mapDTO**:create(map)
+            deactivate MapMapper
+            MapMapper->listmapDTO:add(mapDTO)
+            activate listmapDTO
+
+            deactivate listmapDTO
+            end
+            MapMapper-->Controller:listMapDTO
+            deactivate MapMapper
+            Controller-->UI:listMapDTO
+
+
+
+
+            deactivate Controller
+            UI-->Editor:Show all maps and ask to select one
+            deactivate UI
+            Editor->UI:select one map
+            activate UI
+
+
+
+
+
+UI->Controller:getIndustryTypeList()
+activate Controller
+   Controller->Rep: getInstance()
+            activate Rep
+
+            Rep-->Controller:repositories
+            deactivate Rep
+            Controller->Repos:getIndustryRepository()
+            activate Repos
+            Repos--> Controller:industryRepository
+            deactivate Repos
+            Controller->IndustryRepository:getIndustryList()
+            activate IndustryRepository
+            IndustryRepository-->list**:create()
+            IndustryRepository-->Controller:listInsdustryType
+            deactivate
+Controller-->IndustryMapper**:create()
+Controller->IndustryMapper: toDTO(listIndustryType)
+activate IndustryMapper
+IndustryMapper-->listDTO**:create()
+loop for each Industy in list
+IndustryMapper->list:industry=get(i)
+activate list
+deactivate list
+
+IndustryMapper->IndustryMapper:industryTypeDTO=toDTO(industry)
+activate IndustryMapper
+IndustryMapper-->objDTO**:create(industry)
+deactivate IndustryMapper
+IndustryMapper->listDTO:add(industryDTO)
+activate listDTO
+deactivate listDTO
+end
+IndustryMapper-->Controller:listIndustryTypeDTO
+deactivate
+Controller-->UI:listIndustryTypeDTO
+deactivate Controller
+UI-->Editor:Show the different types of \nindustry and ask to select one .
+deactivate UI
+Editor->UI:Select one IndustryType.
+activate UI
+UI-->Editor:Ask for the X,Y position.
+deactivate UI
+Editor->UI:Gives positionX,positionY.
+activate UI
+UI-->Editor:show data and ask for confirmation
+deactivate UI
+Editor->UI:gives confirmation
+activate UI
+UI->Controller:addIndustry(mapName,industryName,positionX,positionY)
+activate Controller
+Controller->Rep: getInstance()
+            activate Rep
+
+            Rep-->Controller:repositories
+            deactivate Rep
+            Controller->Repos:getMapRepository()
+            activate Repos
+            Repos--> Controller:mapRepository
+            deactivate Repos
+            Controller->MapRepository:findMapbyName(mapName)
+            activate MapRepository
+            MapRepository-->Controller:map
+            deactivate MapRepository
+
+
+              Controller->Rep: getInstance()
+                        activate Rep
+
+                        Rep-->Controller:repositories
+                        deactivate Rep
+                        Controller->Repos:getIndustryRepository()
+                        activate Repos
+                        Repos--> Controller:industryRepository
+                        deactivate Repos
+                        Controller->IndustryRepository:findIndustryTypeByName(industryName)
+                        activate IndustryRepository
+                        IndustryRepository-->Controller:industry
+                        deactivate
+
+
+
+Controller->Map:addIndustry(industry,positionX,positionY)
+activate Map
+alt industry is PrimaryIndustry
+Map-->PrimaryIndustry**:create(primary,positionX,positionY)
+activate PrimaryIndustry
+PrimaryIndustry-->Location**:create(positionX,positionY)
+deactivate
+else industry is TransformingIndustry
+Map-->TransformingIndustry**:create(transforming,positionX,positionY)
+activate TransformingIndustry
+TransformingIndustry-->Location**:create(positionX,positionY)
+deactivate
+else industry is MixedIndustry
+Map-->MixedIndustry**:create(mixed,positionX,positionY)
+activate MixedIndustry
+MixedIndustry-->Location**:create(positionX,positionY)
+deactivate
+end
+
+Map-->Controller:industry
+deactivate Map
+Controller-->UI:industry
+deactivate Controller
+UI-->Editor:Confirm the creation of this industry
+
+
+
+
+
+
+
+
+deactivate Editor
+@enduml

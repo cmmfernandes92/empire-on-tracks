@@ -1,0 +1,176 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+autonumber
+
+actor "Editor" as Editor
+participant ":CreateScenarioUI" as UI
+participant ":CreateScenarioController" as CTRL
+participant "map\n:Map" as Map
+participant "scenario\n:Scenario" as Scenario
+participant "period\n:Period" as Period
+participant "LocomotiveType" as LocomotiveType
+participant "IndustryMapper" as IndustryMapper
+participant "listIndustry\n:List<Industry>" as ListIndustry
+participant "listIndustryDTO\n:List<IndustryDTO>" as ListIndustryDTO
+participant "industryDTO\n:IndustryDTO" as industryName
+participant "industry\n:Industry" as Industry
+
+activate Editor
+
+Editor -> UI : asks to create a scenario
+activate UI
+    UI --> CTRL **: create(map)
+
+    UI --> Editor : requests scenario name, period (start and end date) and initialBudget
+deactivate UI
+
+Editor -> UI : provides name, start, end date and initialBudget
+activate UI
+
+UI --> Editor: show options and asks to select one
+deactivate UI
+
+alt locomotive
+    Editor -> UI: select locomotive types to include in the scenario
+    activate UI
+    UI -> CTRL: getLocomotiveTypes()
+    activate CTRL
+    CTRL -> LocomotiveType: getLocomotiveTypes()
+    activate LocomotiveType
+    LocomotiveType --> CTRL: locomotive types
+    deactivate LocomotiveType
+    CTRL --> UI: locomotive types
+    deactivate CTRL
+    UI --> Editor : shows all available locomotion types
+    deactivate UI
+    Editor -> UI: defines available types
+    activate UI
+    UI -> CTRL: addAvailableTypes(type)
+    activate CTRL
+    CTRL -> Map: addAvailableTypes(type)
+    activate Map
+    Map -> Scenario: addAvailableTypes(type)
+    activate Scenario
+    Scenario --> Map: true
+    deactivate Scenario
+    Map --> CTRL: true
+    deactivate Map
+    CTRL --> UI: true
+    deactivate CTRL
+    UI --> Editor: success
+    deactivate UI
+
+else production rate
+    Editor -> UI: select production rate to include in the scenario
+    activate UI
+    UI -> CTRL: getIndustries()
+    activate CTRL
+    CTRL -> Map: getIndustries()
+    activate Map
+    Map --> ListIndustry**: create()
+    Map --> CTRL: listIndustry
+    deactivate Map
+    CTRL -> IndustryMapper: toDTO(listIndustry)
+    activate IndustryMapper
+    IndustryMapper --> ListIndustryDTO**: create()
+    loop for each industry in list
+        IndustryMapper -> ListIndustry: industry=get(i)
+        activate ListIndustry
+        deactivate ListIndustry
+        IndustryMapper -> IndustryMapper: industryDTO=t0DTO(industry)
+        activate IndustryMapper
+        IndustryMapper --> industryName** : create(industry)
+        deactivate IndustryMapper
+        IndustryMapper -> ListIndustryDTO: add(IndustryDTO)
+        activate ListIndustryDTO
+        deactivate ListIndustryDTO
+    end
+    IndustryMapper --> CTRL: listIndustryDTO
+    deactivate IndustryMapper
+    CTRL --> UI: listIndustryDTO
+    deactivate CTRL
+    UI --> Editor: shows list
+
+    deactivate UI
+    Editor -> UI: select industry and define production rate
+    loop for each industry
+        activate UI
+        UI -> CTRL: defineProductionRate(rate, industryName)
+        activate CTRL
+        CTRL -> Map: findIndustryByName(industryName)
+        activate Map
+        Map --> CTRL: industry
+        deactivate Map
+
+
+        CTRL -> Map: defineProductionRate(rate, industry)
+        activate Map
+        Map -> Scenario: defineProductionRate(rate, industry)
+        activate Scenario
+        Scenario --> Map: true
+        deactivate Scenario
+        Map --> CTRL: true
+        deactivate Map
+        CTRL --> UI: true
+        deactivate CTRL
+        UI --> Editor: success
+        deactivate UI
+
+
+else mixed behavior
+    Editor -> UI: selects mixed behavior
+    activate UI
+    UI --> Editor: show options menu (import/export/transform)
+    deactivate UI
+    Editor -> UI: selects behavior
+    activate UI
+    UI -> CTRL: selectBehavior(behavior)
+    activate CTRL
+    CTRL -> Map: selectBehavior(behavior)
+    activate Map
+    Map -> Scenario: selectBehavior(behavior)
+    activate Scenario
+    Scenario --> Map: true
+    deactivate Scenario
+    Map --> CTRL: true
+    deactivate Map
+    CTRL --> UI: true
+    deactivate CTRL
+    UI --> Editor : success
+    deactivate UI
+end
+end
+
+
+Editor -> UI: asks to see selected data
+activate UI
+UI --> Editor : shows all data and requests confirmation
+deactivate UI
+
+Editor -> UI : confirms data
+activate UI
+UI -> CTRL: createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+activate CTRL
+CTRL -> Map: createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+activate Map
+Map --> Scenario**: createScenario(name, startDate, endDate, initialBudget, availableTypes, productionRate, behavior)
+activate Scenario
+Scenario --> Period**: create(startDate, endDate)
+Scenario -> Scenario: validateYears(startDate, endDate)
+activate Scenario
+deactivate Scenario
+deactivate Scenario
+Map --> CTRL: scenario
+deactivate Map
+CTRL --> UI: scenario
+deactivate CTRL
+
+UI --> Editor : displays operation success
+deactivate UI
+
+deactivate Editor
+@enduml

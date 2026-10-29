@@ -1,0 +1,108 @@
+@startuml
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+package Core {
+
+  package Domain {
+
+    class "Train" {
+        + getLocomotiveType()
+        + getCurrentCargoes()
+    }
+
+    class "Route" {
+        + getPointsOfRoute()
+    }
+
+    class "Carriage" {
+        + Carriage(cargoType)
+    }
+
+    class "CargoType" {
+    }
+
+    class "Locomotive" {
+        - powerSource: String
+        - acceleration: double
+        - buyCost: double
+        - startYear: int
+        - fuelCost: double
+        - maintenanceCost: double
+
+        + isAvailable(date)
+    }
+
+  }
+
+  package Controller {
+
+    class "ListTrainsController" {
+        + requestTrainList()
+    }
+
+  }
+
+  package Repository {
+
+    class "TrainRepository" {
+        + getSortedTrainsByIds(listOfIds)
+        + getTrainById(trainId)
+        + sortByLocomotiveTypeAndName()
+    }
+
+    class "Repositories" {
+        + getInstance()
+        + getTrainRepository()
+    }
+
+  }
+
+  package Mapper {
+
+    class "TrainMapper" {
+        + toSortedDTO(sortedTrainList)
+        + toDTO(train)
+    }
+
+  }
+
+  package DTO {
+
+    class "SortedTrainsDTO" {
+        + add(trainDTO)
+    }
+
+    class "TrainDTO" {
+    }
+
+  }
+
+}
+
+package UI {
+
+  class "ListTrainsUI" {
+      + requestTrainList()
+  }
+
+}
+
+ListTrainsUI .> ListTrainsController
+ListTrainsController ..> Repositories
+ListTrainsController ..> TrainRepository
+ListTrainsController ..> TrainMapper
+ListTrainsController ..> SortedTrainsDTO
+
+Repositories --> TrainRepository
+TrainRepository ..> Train
+TrainMapper ..> TrainDTO
+TrainMapper ..> SortedTrainsDTO
+Train "1" --> "1" Route : follows
+Train "1"*-- "*" Carriage : is composed of
+Train "1"*-- "1"Locomotive : is composed of
+Carriage "1.*"--> "1"CargoType : is assigned to
+
+@enduml

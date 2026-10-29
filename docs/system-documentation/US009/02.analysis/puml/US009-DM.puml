@@ -1,0 +1,59 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+hide circle
+hide methods
+
+class Simulation {
+    isRunning
+    budget
+}
+
+class Player {
+}
+
+class Scenario {
+    industryProductionRate
+    behaviorOfMixedIndustries
+    availableLocomotiveTypes
+    initialBudget
+}
+
+class Period {
+    start
+    end
+}
+
+class LocomotiveType {
+    type
+}
+
+class Locomotive {
+    powerSource
+    acceleration
+    buyCost
+    startYear
+    fuelCost
+    maintenanceCost
+}
+
+class Train {
+    name
+    plateNumber
+}
+
+Simulation "1" --- "1" Scenario : is composed of >
+Player "1" - "*" Simulation : runs >
+Player "1" - "1..*" Train : owns >
+Player "1" - "1..*" Locomotive : buys >
+
+
+Scenario "1" -- "1" Period : has >
+Scenario "1" -- "1..*" LocomotiveType : restricts locomotion types >
+
+LocomotiveType "1" -- "1..*" Locomotive : is from <
+Train "1" -- "1" Locomotive : is composed of >
+
+@enduml

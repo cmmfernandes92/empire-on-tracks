@@ -1,0 +1,108 @@
+@startuml
+
+'skinparam monochrome true
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+'skinparam linetype orto
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype polyline
+skinparam nodesep 50
+skinparam ranksep 50
+
+
+package "UI" {
+  class CreateMapUI {
+
+  }
+
+}
+
+' =====================  CONTROL  ======================
+package "Controller"{
+  class CreateMapController {
+  +createMapController()
+    +createMap(name, width, height)
+    +createMap(name:String, sizeId)
+    +getAvailableSizes():
+  }
+}
+
+package "Domain{
+package "Model"  {
+  class Map {
+    -name: String
+    +Map(name, size)
+    +Map(name, widht, height)
+  }
+
+  class Size {
+    -width: int
+    -height: int
+    +isPositive(value):
+    +Size(widht,height)
+  }
+}
+
+' =====================  REPOSITORY / PERSISTÊNCIA  ====
+package "Repository"  {
+
+class Repositories {
+  - Repositories()
+  + getInstance()
+  + getMapRepository()
+  + getSizeRepository()
+}
+
+  class MapRepository {
+    +save(map)
+    +isMapNameUnique(name)
+  }
+
+  class SizeRepository {
+    +getAvailableSizes()
+    +findSizeById(sizeID)
+  }
+}
+
+' =====================  DTO & MAPPER  =================
+package " Mapper" {
+  class SizeMapper {
+    +toDTO(size):
+    +toDTO(listSize):
+  }
+  package "DTO"{
+  class SizeDTO {
+    +width: int
+    +height: int
+  }
+}
+
+
+
+CreateMapUI .> CreateMapController
+
+CreateMapController ..>Repositories
+CreateMapController ..>MapRepository
+CreateMapController ..>SizeRepository
+CreateMapController ..>SizeMapper
+CreateMapController ..>SizeDTO
+CreateMapController..>Size
+
+Repositories-->MapRepository:mapRepository
+Repositories-->SizeRepository:sizeRepository
+
+MapRepository--->"*"Map:map
+SizeRepository--->"*"Size:size
+
+SizeMapper..>SizeDTO
+SizeMapper..>Size
+
+Map-->Size:has
+
+
+
+
+
+@enduml

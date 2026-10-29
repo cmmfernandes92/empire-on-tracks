@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="pt.ipp.isep.dei.ui.gui.CreateMapFormController"
+      spacing="15" alignment="TOP_LEFT">
+    <padding>
+        <Insets top="20" right="30" bottom="20" left="30"/>
+    </padding>
+
+    <Label text="Create New Map"
+           style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Map Name:" minWidth="100"/>
+        <TextField fx:id="nameField" prefWidth="200"/>
+    </HBox>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Use predefined size?" minWidth="150"/>
+        <CheckBox fx:id="usePredefinedCheck"/>
+    </HBox>
+
+    <VBox fx:id="predefinedBox" spacing="8" visible="false" managed="false">
+        <Label text="Available Sizes:"/>
+        <ComboBox fx:id="sizeCombo" prefWidth="200"/>
+    </VBox>
+
+    <VBox fx:id="customBox" spacing="8">
+        <HBox spacing="10">
+            <Label text="Width:" minWidth="100"/>
+            <TextField fx:id="widthField" prefWidth="80"/>
+        </HBox>
+        <HBox spacing="10">
+            <Label text="Height:" minWidth="100"/>
+            <TextField fx:id="heightField" prefWidth="80"/>
+        </HBox>
+    </VBox>
+
+    <Label fx:id="messageLabel" wrapText="true" style="-fx-text-fill: red;"/>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Cancel" onAction="#onCancel"/>
+        <Button text="Create" onAction="#onCreateMap"/>
+    </HBox>
+</VBox>

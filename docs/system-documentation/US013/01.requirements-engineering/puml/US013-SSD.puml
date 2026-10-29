@@ -1,0 +1,36 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Employee
+participant ":System" as System
+
+activate Employee
+
+    Employee -> System : asks to validate a train
+    activate System
+
+        System --> Employee : shows list of trains
+    deactivate System
+
+    Employee -> System : selects a type of train
+    activate System
+
+        System --> Employee : asks station type
+        deactivate System
+
+    Employee -> System : selects station type
+    activate System
+
+        System --> Employee : shows all data and requests confirmation
+    deactivate System
+
+    Employee -> System : confirms data
+    activate System
+
+        System --> Employee : displays operation success
+    deactivate System
+@enduml

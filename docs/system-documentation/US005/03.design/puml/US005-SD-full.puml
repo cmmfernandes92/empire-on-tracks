@@ -1,0 +1,139 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as Player
+participant ":BuildStationUI" as UI
+participant ":BuildStationController" as Controller
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "mapRepository\n:MapRepository" as MAP_REPO
+participant ":Map" as Map
+participant ":Station" as Station
+participant ":StationType" as StationType
+participant ":Location" as Location
+participant ":Simulation" as Simulation
+participant ":GameState" as GameState
+
+activate Player
+
+Player -> UI : wants to build a station
+activate UI
+
+    UI -> Controller : startBuildStation()
+    activate Controller
+
+        Controller -> REPOS : getInstance()
+        activate REPOS
+            REPOS --> Controller : repositories
+        deactivate REPOS
+
+        Controller -> REPOS_SINGLETON : getMapRepository()
+        activate REPOS_SINGLETON
+            REPOS_SINGLETON --> Controller : mapRepository
+        deactivate REPOS_SINGLETON
+
+        Controller -> MAP_REPO : getCurrentMap()
+        activate MAP_REPO
+            MAP_REPO --> Controller : currentMap
+        deactivate MAP_REPO
+
+        Controller -> UI : request station type selection\n(Depot, Terminal, Station)
+    deactivate Controller
+
+UI --> Player : shows station type options
+Player -> UI : selects station type
+activate UI
+
+    UI -> Controller : submitStationType(type)
+    activate Controller
+
+        Controller -> UI : request coordinates X,Y
+
+        Controller -> Simulation : getCurrentDate()
+        activate Simulation
+            Simulation --> Controller : currentDate
+        deactivate Simulation
+
+        alt Selected type is Station
+            Controller -> UI : request center position (NE, SE, NW, SW)
+            UI --> Player : select center position
+            Player -> UI : submits center position
+        else Selected type is Depot or Terminal
+            Controller -> UI : center will be geometric based on X,Y
+        end
+
+        Controller -> UI : proposes station name based on city and type
+        Controller -> UI : ask if player accepts suggested name or wants custom name
+    deactivate Controller
+deactivate UI
+
+UI --> Player : shows name suggestion
+Player -> UI : confirms or rejects name
+activate UI
+
+    UI -> Controller : submitNameDecision(accept/reject, [custom name if rejected])
+    activate Controller
+
+        alt Player accepts suggested name
+            Controller -> UI : show station preview with name and location
+        else Player inputs custom name
+            Controller -> UI : validate custom name restrictions
+            Controller -> Map : isStationNameDuplicate(name)
+            alt name duplicated
+                Controller -> UI : showError("Station name already exists")
+            else
+                Controller -> UI : show station preview with custom name and location
+            end
+        end
+
+        Controller -> UI : request confirmation of station creation
+    deactivate Controller
+deactivate UI
+
+Player -> UI : confirms station creation
+activate UI
+
+    UI -> Controller : confirmStationCreation()
+    activate Controller
+
+        Controller -> Player : hasSufficientBudget(stationType.cost)
+        alt insufficient budget
+            Controller -> UI : showError("Not enough budget")
+        else
+            Controller -> Map : isOccupied(location)
+            activate Map
+                Map --> Controller : true / false
+            deactivate Map
+
+            alt location occupied
+                Controller -> UI : warn("Location is already occupied")
+            else
+                Controller -> StationType : retrieve(type)
+                Controller -> Location : create(x,y)
+                Controller -> Station : create(name, stationType, location)
+
+                Controller -> Map : addStation(station)
+                Controller -> Player : deductBudget(stationType.cost)
+
+                UI -> Map : highlightNewStation(station)
+
+                Controller -> GameState : save()
+
+                Controller -> UI : showSuccessMessage()
+            end
+        end
+
+        alt unexpected error
+            Controller -> UI : showError("An unexpected error occurred. Please try again.")
+        end
+
+    deactivate Controller
+deactivate UI
+
+deactivate Player
+@enduml
+

@@ -1,0 +1,88 @@
+@startuml
+skinparam monochrome true
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+autonumber
+
+actor "Player" as PLAYER
+participant ":StationListUI" as UI
+participant ":ListStationController" as CTRL
+participant "map\n:Map" as REPOS
+participant "Map \n :Station" as REPOS_SINGLETON
+participant "Cargo" as CARGO
+participant "Building" as BUILDING
+
+
+
+activate PLAYER
+
+        PLAYER -> UI : requests station list
+        activate UI
+            UI -> CTRL : getAllStations()
+            activate CTRL
+                CTRL -> REPOS : getStation()
+                activate REPOS
+                    REPOS --> CTRL: listStation
+                deactivate REPOS
+
+                CTRL->REPOS_SINGLETON :getAllNamesStation
+                activate REPOS_SINGLETON
+                loop
+                REPOS_SINGLETON->REPOS_SINGLETON:getname()
+                end
+                REPOS_SINGLETON-->CTRL: listStationName
+
+                deactivate REPOS_SINGLETON
+
+
+
+
+
+                CTRL --> UI : displays(listStationName)
+            deactivate CTRL
+
+            UI --> PLAYER : displays station list
+        deactivate UI
+
+    PLAYER -> UI : selects a station
+    activate UI
+        UI -> CTRL : getStationDetails(stationId)
+        activate CTRL
+
+         CTRL -> REPOS : getStation()
+                        activate REPOS
+                            REPOS --> CTRL: listStation
+                        deactivate REPOS
+
+                        CTRL->REPOS_SINGLETON :getAllNamesStation
+                        activate REPOS_SINGLETON
+                        loop
+                        REPOS_SINGLETON->REPOS_SINGLETON:getname()
+                        end
+                        REPOS_SINGLETON-->CTRL: listStationName
+
+                        deactivate REPOS_SINGLETON
+
+
+
+            CTRL -> CTRL: getStationByName(stationName)
+            CTRL --> CTRL : id
+            activate REPOS_SINGLETON
+                CTRL -> REPOS_SINGLETON : getDetails(listStation[id])
+
+                    REPOS_SINGLETON -> BUILDING : getUpgrades()
+                    REPOS_SINGLETON -> CARGO : getCargoes()
+
+
+                REPOS_SINGLETON --> CTRL : stationDetails
+                deactivate REPOS_SINGLETON
+
+            CTRL --> UI : displays(stationDetails(name, buildings, cargoes))
+        deactivate CTRL
+
+        UI --> PLAYER : shows station details\n(buildings and cargoes)
+    deactivate UI
+
+deactivate PLAYER
+@enduml

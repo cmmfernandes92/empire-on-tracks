@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="pt.ipp.isep.dei.ui.gui.SimulatorStatusController"
+      alignment="TOP_LEFT" spacing="10" style="-fx-padding: 20;">
+
+    <Label text="=== SIMULATION STATUS ===" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+    <TextArea fx:id="statusTextArea" editable="false" wrapText="true" prefHeight="400"/>
+    <Button text="Close" onAction="#handleClose" alignment="CENTER_RIGHT"/>
+
+</VBox>
+

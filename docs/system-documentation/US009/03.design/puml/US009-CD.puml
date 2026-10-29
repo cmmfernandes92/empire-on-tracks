@@ -1,0 +1,96 @@
+@startuml
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+package Core {
+
+  package Domain {
+
+  class "Player" {
+      + buyLocomotiveAsTrain(locomotive, trainName)
+      - hasSufficientBudget(cost)
+      - deductPrice(cost)
+      - createUniquePlateNumber()
+      - addTrain(train)
+      - validateTrain(train)
+  }
+
+  class "Locomotive" {
+      - powerSource: String
+      - acceleration: double
+      - buyCost: double
+      - startYear: int
+      - fuelCost: double
+      - maintenanceCost: double
+
+      + isAvailable(date)
+  }
+
+  class "Train" {
+      - plateNumber: String
+      - name: String
+
+      + Train(plateNumber, name, locomotive)
+  }
+
+  }
+
+  package "Controller" {
+  class "BuyLocomotiveController" {
+      + getAvailableLocomotives()
+      + buyLocomotiveAsTrain(player, locomotiveId, trainName)
+  }
+  }
+
+  package "Repository" {
+  class "LocomotiveRepository" {
+      + getAvailableLocomotives(date)
+      + findLocomotiveById(id)
+  }
+  class "Repositories" {
+      + getInstance()
+      + getLocomotiveRepository()
+  }
+  }
+
+  package "Mapper" {
+  class "LocomotiveMapper" {
+      + toDTO(locomotive)
+      + toDTO(List<Locomotive>)
+  }
+  }
+
+  package "DTO" {
+  class "LocomotiveDTO" {
+  }
+  class "LocomotiveListDTO" {
+      + add(locomotiveDTO)
+  }
+  }
+
+}
+
+package "UI" {
+class "BuyLocomotiveUI" {
+
+}
+}
+
+BuyLocomotiveUI .> BuyLocomotiveController
+BuyLocomotiveController ..> Player
+BuyLocomotiveController ..> LocomotiveRepository
+BuyLocomotiveController ..> LocomotiveMapper
+BuyLocomotiveController ..> Locomotive
+BuyLocomotiveController ..> Train
+BuyLocomotiveController ..> LocomotiveDTO
+BuyLocomotiveController ..> Repositories
+Repositories --> LocomotiveRepository
+Player o-- Train : creates
+Train "1"*-- "1"Locomotive : is composed of
+Player --> "*" Locomotive : buys
+LocomotiveMapper ..> LocomotiveDTO
+LocomotiveMapper ..> LocomotiveListDTO
+
+@enduml

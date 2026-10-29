@@ -1,0 +1,97 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+autonumber
+
+actor ":Player" as PlayerActor
+participant ":ListTrainsUI" as UI
+participant ":ListTrainsController" as Controller
+participant ":Player" as PlayerDomain
+participant "Repositories" as REPOS
+participant "repositories\n:Repositories" as REPOS_SINGLETON
+participant "trainRepository\n:TrainRepository" as TRAIN_REPO
+participant ":Train" as Train
+participant ":TrainMapper" as TrainMapper
+
+activate PlayerActor
+    PlayerActor -> UI : requests to list all trains
+    activate UI
+
+        UI --> Controller** : create(player)
+        UI -> Controller : requestTrainList()
+        activate Controller
+
+            Controller -> PlayerDomain : getOwnedTrains()
+            activate PlayerDomain
+                PlayerDomain --> Controller : listOfTrains
+            deactivate PlayerDomain
+
+            Controller -> REPOS : getInstance()
+            activate REPOS
+                REPOS --> Controller : repositories
+            deactivate REPOS
+
+            Controller -> REPOS_SINGLETON : getTrainRepository()
+            activate REPOS_SINGLETON
+                REPOS_SINGLETON --> Controller : trainRepository
+            deactivate REPOS_SINGLETON
+
+            ' sorting trains
+            Controller -> TRAIN_REPO : getSortedTrainsByIds(listOfTrains)
+            activate TRAIN_REPO
+
+
+
+                loop for each trainId in listOfTrains
+                    TRAIN_REPO -> TRAIN_REPO : getTrainById(trainId)
+                    TRAIN_REPO -> Train : getLocomotiveType()
+                        activate Train
+                        Train --> TRAIN_REPO : locomotiveType
+                        deactivate Train
+
+                    TRAIN_REPO -> Train : getCurrentCargoes()
+                        activate Train
+                        Train --> TRAIN_REPO : currentCargoes
+                        deactivate Train
+                end
+
+                TRAIN_REPO -> TRAIN_REPO : sortByLocomotiveTypeAndName()
+                create "sortedTrainList : List<Train>" as SortedTrainList
+                TRAIN_REPO --> SortedTrainList : create()
+                TRAIN_REPO --> Controller : sortedTrainList
+            deactivate TRAIN_REPO
+
+
+                        Controller -> TrainMapper : toSortedDTO(sortedTrainList)
+            activate TrainMapper
+
+                create "sortedTrainsDTO : SortedTrainsDTO" as GroupedDTO
+                TrainMapper --> GroupedDTO : create()
+
+                loop for each train in sortedTrainList
+                    TrainMapper -> SortedTrainList : get(i)
+                    activate SortedTrainList
+                    deactivate SortedTrainList
+
+                    TrainMapper -> TrainMapper : toDTO(train)
+                    activate TrainMapper
+                        TrainMapper --> "trainDTO : TrainDTO" : create()
+                    deactivate TrainMapper
+
+                    TrainMapper -> GroupedDTO : add(trainDTO)
+                    activate GroupedDTO
+                    deactivate GroupedDTO
+                end
+
+                TrainMapper --> Controller : sortedTrainsDTO
+            deactivate TrainMapper
+
+
+            Controller --> UI : sortedTrainDTO
+        deactivate Controller
+
+        UI --> PlayerActor : displays all owned trains grouped by \nlocomotive type,sorted alphabetically, \nshowing locomotive details \nand current cargoes
+    deactivate UI
+deactivate PlayerActor
+@enduml

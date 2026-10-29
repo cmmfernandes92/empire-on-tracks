@@ -1,0 +1,100 @@
+@startuml
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+package Core {
+
+  package Domain {
+
+    class "Train" {
+        + getOwner()
+        + getName()
+        + canTraverseRoute(pointOfRouteList, listOfRailLines)
+        + assignRoute(route)
+        + addCarriage(carriage)
+    }
+
+    class "Route" {
+        + Route(pointOfRouteList)
+        + getPointsOfRoute()
+    }
+
+    class "PointOfRoute" {
+        + PointOfRoute(stationId, selectedCargoTypes, selectedCarriageCounts, mode)
+        + getCargoCarriagesCount()
+    }
+
+    class "Carriage" {
+        + Carriage(cargoType)
+    }
+
+    class "CargoType" {
+    }
+
+       class "Map" {
+      + getRailLines()
+  }
+
+  }
+
+  package "Controller" {
+
+    class "AssignTrainToRouteController" {
+        + getOwnedTrainNames()
+        + startNewRoute(trainName)
+        + getAvailableStations()
+        + getAvailableCargoTypes(stationId)
+        + addPointOfRoute(stationId, selectedCargoTypes, selectedCarriageCounts, mode)
+        + assignRouteToTrain(trainName, route)
+    }
+
+  }
+
+  package "Repository" {
+
+    class "TrainRepository" {
+        + getAllTrains()
+        + findByName(trainName)
+        + save(train)
+    }
+
+    class "StationRepository" {
+        + getAllStations()
+        + getAvailableCargoTypes(stationId)
+    }
+
+    class "Repositories" {
+        + getInstance()
+        + getTrainRepository()
+        + getStationRepository()
+    }
+
+  }
+
+
+}
+
+package UI {
+
+  class "AssignTrainToRouteUI" {
+     }
+}
+
+AssignTrainToRouteUI .> AssignTrainToRouteController
+AssignTrainToRouteController ..> Repositories
+AssignTrainToRouteController ..> TrainRepository
+AssignTrainToRouteController ..> StationRepository
+AssignTrainToRouteController ..> Train
+AssignTrainToRouteController ..> Route
+AssignTrainToRouteController ..> PointOfRoute
+AssignTrainToRouteController ..> Map
+
+Train "1"--> "1" Route : follows
+Train *-- Carriage : is composed of
+Route "1"--> "2..*"PointOfRoute : connects
+PointOfRoute "1" --> "1..*" CargoType : is assigned
+Carriage "1" --> "1" CargoType : is assigned
+
+@enduml

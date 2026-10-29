@@ -1,0 +1,74 @@
+@startuml
+skinparam packageStyle folder
+skinparam shadowing false
+skinparam linetype polyline
+skinparam classAttributeIconSize 0
+
+package Domain {
+class "City" {
+    - name: String
+    - positionX: int
+    - positionY: int
+    - houseBlockCount: int
+    - assignmentMethod: String
+    - random: Random (static)
+
+    + City(name, positionX, positionY, houseBlockCount, assignmentMethod)
+    + validateName()
+    + validateHouseBlocks()
+    + createHouseBlocksManually(posX, posY)
+    + createHouseBlocksAutomatically()
+    + addHouseBlock(block)
+    - computeRelativePosition()
+
+}
+
+class "Location" {
+    - x: int
+    - y: int
+
+    + Location(x, y)
+}
+
+class "HouseBlock" {
+
+   + HouseBlock(positionX, positionY)
+}
+
+class "Map" {
+
+    + create(name, positionX, positionY, houseBlockCount, assignmentMethod, manualPosX, manualPosY)
+    + isCityNameDuplicate(name)
+}
+}
+package "Controller" {
+class "AddCityController" {
+
+    + AddCityController(map)
+    + isCityNameDuplicate(name)
+    + createCity(name, positionX, positionY, houseBlockCount, assignmentMethod, manualPosX, manualPosY)
+}
+}
+
+package "UI" {
+class "AddCityUI" {
+
+}
+}
+
+
+AddCityUI .> AddCityController
+
+AddCityController ..> City
+AddCityController ..> Location
+AddCityController ..> HouseBlock
+AddCityController ..> Map
+
+Map  --> "*" City : contains
+City  --> "1..*" HouseBlock : is composed of
+
+
+HouseBlock --> "1" Location : position
+
+
+@enduml
